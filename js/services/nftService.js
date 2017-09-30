@@ -26,8 +26,11 @@ newService.onAuth = nftOnAuth;
 newService.onConnect = null;
 newService.onDisconnect = null;
 newService.onMessage = nftOnMessage;
-// local
-newService.selectedHostName = null;
+newService.onHostSelected = null;
+
+// private vars
+newService.htmlRuleTableSelected = null;
+newService.htmlRuleHeaderSelected = null;
 
 
 function nftOnAuth(){
@@ -39,7 +42,7 @@ function nftOnAuth(){
         htmlNavElement = document.createElement('a');
         htmlNavElement.id = "nftButtonShow";
         htmlNavElement.innerHTML = "<span class=\"glyphicon glyphicon-fire\"></span> Netfilter";
-        htmlNavElement.onclick = function(){ nftHostsGet(); }
+        htmlNavElement.onclick = function(){ nftLoadPage(); }
         navAppend( htmlNavElement );
     }
 
@@ -64,8 +67,10 @@ function nftOnMessage( topicHostName, topicGroup, topicCommand, payload ){
     if( topicCommand == "chains" ){
     // we need to parse the string to json
         var jsonPayload = JSON.parse(payload);
+
+		if( typeof jsonPayload != 'object' ) return;
         if( jsonPayload === null || jsonPayload === undefined ) return;
-        
+
         nftTableAppendRules( jsonPayload );
         return;
     }
@@ -85,7 +90,7 @@ function nftHostsGet(){
 // load
     htmlLoadFile( "output", "html/nft.html", function(){
         jsLoadFile( "js/services/nft.js" );
-        
+
         for( hostName in copilot.hostnames ){
             displayName = hostName;
 
@@ -105,23 +110,30 @@ function nftHostsGet(){
 }
 
 
+function nftLoadPage(){
+// load
+    htmlLoadFile( "output", "html/nft.html", function(){
+        jsLoadFile( "js/services/nft.js" );
+		nftRequestChains( copilot.selectedHostName );
+	});
 
 
-function nftHostClicked( button, hostName ){
+}
+
+
+function nftLoad(){
     var nftService = copilot.services["nft"];
 
-// save the hostname
-    nftService.selectedHostName = hostName;
-
+/*
 // disable the last selected button
     if( nftHostObjectActive !== null ){
         nftHostObjectActive.removeAttribute("class");
     }
 
-// enable selected button
+
     nftHostObjectActive = button;
     nftHostObjectActive.className = 'active';
-    nftHostObjectActive.hostname = hostName;
+    nftHostObjectActive.hostname = copilot.selectedHostName;
 
 // hide chain tabs
     var nftChainTabBar = document.getElementById('nftChainTabBar');
@@ -130,15 +142,14 @@ function nftHostClicked( button, hostName ){
 // hide rule table
     var nftChainTabBar = document.getElementById('nftChainTable');
     nftChainTabBar.style.display = 'none';
-
-    nftRequestChains( hostName );
+*/
+    nftRequestChains( copilot.selectedHostName );
 }
 
 
 
 
-var nftChainObjectActive = null;
-var nftRuleObjectActive = null;
+var htmlRuleHeaderSelected = null;
 var nftRules = null;
 
 function nftRequestChains( hostName ){
@@ -148,7 +159,7 @@ function nftRequestChains( hostName ){
     nftRules = null;
 
 // we want to get the rules
-    wsMessageSend( service.selectedHostName, service.listenGroup, "chainsList", hostName );
+    wsSendMessage( null, service.selectedHostName, service.listenGroup, "chainsList", hostName );
 
 }
 
@@ -282,16 +293,18 @@ function nftTableAppendRule( chainName, jsonRule ){
 
 
 function nftChainClicked( button, chainName ){
+    var nftService = copilot.services["nft"];
 
-    if( nftChainObjectActive !== null ){
-        nftChainObjectActive.removeAttribute("class");
+
+    if( nftService.htmlRuleHeaderSelected !== null ){
+        nftService.htmlRuleHeaderSelected.removeAttribute("class");
 
         var nftRules = document.getElementById('nftRules_' + chainName);
         nftRules.style.display = 'none';
     }
 
-    nftChainObjectActive = button;
-    nftChainObjectActive.className = 'active';
+    nftService.htmlRuleHeaderSelected = button;
+    nftService.htmlRuleHeaderSelected.className = 'active';
 
 // show the table
     var nftChainTable = document.getElementById('nftChainTable');
@@ -299,13 +312,13 @@ function nftChainClicked( button, chainName ){
 
 
 // hide old rule
-    if( nftRuleObjectActive !== null ){
-        nftRuleObjectActive.style.display = 'none';
+    if( nftService.htmlRuleTableSelected !== null ){
+        nftService.htmlRuleTableSelected.style.display = 'none';
     }
 // show new rule
     var nftRules = document.getElementById('nftRules_' + chainName);
     nftRules.style.display = '';
-    nftRuleObjectActive = nftRules;
+    nftService.htmlRuleTableSelected = nftRules;
 
 }
 
@@ -546,7 +559,7 @@ function nftRulesSave(){
         return;
     }
 
-    wsMessageSend( service.selectedHostName, service.listenGroup, "save", JSON.stringify(nftRules) );
+    wsSendMessage( null, service.selectedHostName, service.listenGroup, "save", JSON.stringify(nftRules) );
 
 }
 
@@ -557,7 +570,7 @@ function nftRulesApply(){
         return;
     }
 
-    wsMessageSend( service.selectedHostName, service.listenGroup, "apply", "" );
+    wsSendMessage( null, service.selectedHostName, service.listenGroup, "apply", "" );
 }
 
 wsServiceRegister( newService );

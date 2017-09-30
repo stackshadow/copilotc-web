@@ -17,12 +17,18 @@ along with copilot.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
+var dummy = {};
+dummy = "";
+console.log( typeof dummy )
+
+
 var copilot = {};
 copilot.ws = null;
 copilot.wsConnected = false;
 copilot.hostnames = {};
 copilot.services = [];
-
+copilot.myhostname = "localhost";
+copilot.selectedHostName = null;
 
 /**
 @brief Load java-script file and init
@@ -82,6 +88,25 @@ function            htmlLoadFile( id, fileName, finishLoadingFunction = null ){
 
 
 }
+function			genUUID(){
+
+	var u='',i=0;
+	while(i++<36){
+		var c='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxxx'[i-1],r=Math.random()*16|0,v=c=='x'?r:(r&0x3|0x8);
+		u+=(c=='-'||c=='4')?c:v.toString(16);
+	}
+	return u;
+
+	//	var u='',m='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx',i=0,rb=Math.random()*0xffffffff|0;
+
+/*
+	while(i++<36) {
+		var c=m[i-1],r=rb&0xf,v=c=='x'?r:(r&0x3|0x8);
+		u+=(c=='-')
+	}
+*/
+}
+
 
 // messages
 function            messageCreate(){
@@ -171,7 +196,7 @@ function            connStateCreate(){
 // core settings
     htmlNavElement = document.createElement( "div" );
     htmlNavElement.innerHTML = "<a href='#' onclick=\"copilotPing()\">Ping</a>";
-    
+
     settingAppend( htmlNavElement );
 
 }
@@ -205,7 +230,6 @@ function            settingAppend( htmlElement ){
 }
 
 
-var wsTopicBase = "nodes/develop-arch/";
 
 
 function            wsServiceRegister( service ){
@@ -226,7 +250,7 @@ function            wsConnect(){
 
 // already connected ?
     if( copilot.wsConnected == true ) return;
-    
+
     if ("WebSocket" in window){
 
     // notificate the user
@@ -247,12 +271,53 @@ function            wsConnect(){
 
 }
 function            wsDisconnect(){
-    
+
     copilot.ws.close();
     copilot.ws = null;
     copilot.wsConnected = false;
 }
-function            wsMessageSend( topicHostName, topicGroup, topicCommand, payload ){
+function			wsSendMessage( id, hostname, group, command, payloadString ){
+
+// build message
+	var jsonMessage = {};
+	jsonMessage["id"] = id;
+	jsonMessage["h"] = hostname;
+	jsonMessage["g"] = group;
+	jsonMessage["c"] = command;
+
+
+// id is null
+	if( id === null || id === undefined ){
+		jsonMessage["id"] = genUUID();
+	}
+
+// no hostname
+	if( hostname === null || hostname === undefined ){
+		if( copilot.selectedHostName === null ){
+			jsonMessage["h"] = copilot.myhostname
+		} else {
+			jsonMessage["h"] = copilot.selectedHostName
+		}
+	}
+
+
+
+	if( typeof payloadString == "object" ){
+		jsonMessage["v"] = payloadString;
+	}
+	if( typeof payloadString == "string" ){
+		jsonMessage["v"] = payloadString;
+	}
+
+// json -> string
+    commandString = JSON.stringify(jsonMessage);
+    messageLog( "websocket send", commandString );
+
+// send
+    copilot.ws.send( commandString );
+	return id;
+}
+function            wsMessageSendObject( topicGroup, topicCommand, payload ){
 
 // connected ?
     if( copilot.wsConnected == false ){
@@ -261,10 +326,13 @@ function            wsMessageSend( topicHostName, topicGroup, topicCommand, payl
     }
 
 //
-    if( topicHostName === null || topicHostName === undefined ){
-        topicHostName = copilot.myhostname
-        //topicHostName = "develop-arch";
-    }
+	if( copilot.selectedHostName === null ){
+		topicHostName = copilot.myhostname
+	} else {
+		topicHostName = copilot.selectedHostName
+	}
+
+
 
 // command
     var jsonCMD = {};
@@ -276,9 +344,65 @@ function            wsMessageSend( topicHostName, topicGroup, topicCommand, payl
     messageLog( "websocket send", commandString );
 
     copilot.ws.send( commandString );
+
+	return payload.id;
+}
+function            wsMessageSendValue( topicGroup, topicCommand, id, value ){
+
+// connected ?
+    if( copilot.wsConnected == false ){
+        messageLog( "websocket send", "Could not send, not connected" );
+        return;
+    }
+
+//
+	if( copilot.selectedHostName === null ){
+		topicHostName = copilot.myhostname
+	} else {
+		topicHostName = copilot.selectedHostName
+	}
+
+
+
+// command
+    var jsonCMD = {};
+    jsonCMD["topic"] = "nodes/" + topicHostName + "/" + topicGroup + "/" + topicCommand;
+    jsonCMD["payload"]["id"] = id;
+	jsonCMD["payload"]["value"] = value;
+
+// command string
+    commandString = JSON.stringify(jsonCMD);
+    messageLog( "websocket send", commandString );
+
+    copilot.ws.send( commandString );
+
+	return payload.id;
+}
+function            wsMessageSendValueToHost( hostName, topicGroup, topicCommand, id, value ){
+
+// connected ?
+    if( copilot.wsConnected == false ){
+        messageLog( "websocket send", "Could not send, not connected" );
+        return;
+    }
+
+
+// command
+    var jsonCMD = {};
+    jsonCMD["topic"] = "nodes/" + hostName + "/" + topicGroup + "/" + topicCommand;
+    jsonCMD["payload"]["id"] = id;
+	jsonCMD["payload"]["value"] = value;
+
+// command string
+    commandString = JSON.stringify(jsonCMD);
+    messageLog( "websocket send", commandString );
+
+    copilot.ws.send( commandString );
+
+	return payload.id;
 }
 
-
+// websocket events
 function            wsOnOpen(){
     copilot.wsConnected = true;
     connStateConnected();
@@ -311,47 +435,51 @@ function            wsOnClose(){
 }
 function            wsOnMessage( evt ){
     var received_msg = evt.data;
+	messageLog( "websocket rec raw", received_msg );
 
     jsonObject = JSON.parse(received_msg);
 
 // command string
     commandString = JSON.stringify(jsonObject);
-    messageLog( "websocket recieve", commandString );
-
-// no topic
-    if( jsonObject.topic === undefined ){
-        return;
-    }
 
 // we need the hostname for some plugins
-    var jsonTopicArray = jsonObject.topic.split("/");
-    var topicHostName = jsonTopicArray[1];
-    var topicGroup = jsonTopicArray[2];
-    var topicCommand = jsonTopicArray[3];
-
-// remove the base string from the topic to make it easyer
-    jsonObject.topic = jsonObject.topic.replace(wsTopicBase,'');
+    var topicHostName = jsonObject.h;
+    var topicGroup = jsonObject.g;
+    var topicCommand = jsonObject.c;
 
 // core commands
-    if( jsonObject.topic.endsWith( "msgInfo" ) == true ){
-        var message = jsonObject.payload;
+    if( topicCommand == "msgInfo" ){
+        var message = jsonObject.v;
         if( message === undefined ) return;
         messageInfo( message, 10 );
     }
-    if( jsonObject.topic.endsWith( "msgError" ) == true ){
-        var message = jsonObject.payload;
+    if( topicCommand == "msgError" ){
+        var message = jsonObject.v;
         if( message === undefined ) return;
         messageAlert( message );
     }
 
-    if( topicGroup == "co" && topicCommand == "hostname" ){
-        copilot.myhostname = topicHostName;
+    if( topicGroup == "co" && topicCommand == "hostName" ){
+        copilot.myhostname = jsonObject.v;
+		messageLog( "Our Hostname: ", copilot.myhostname );
+
+	// and we select it by default ;)
+		copliotSelectHost( copilot.myhostname );
     }
 
+// if we get a pong ( an ping answer ) than we just remember the hostname
+// other plugins maybe do something with the copilot.hostnames-object
     if( topicGroup == "co" && topicCommand == "pong" ){
         copilot.hostnames[topicHostName] = "";
     }
 
+// this command just remember the hostname for later use
+	if( topicGroup == "co" && topicCommand == "knownHosts" ){
+		jsonPayload = JSON.parse(jsonObject.v);
+		for( hostObject in jsonPayload ){
+			copilot.hostnames[hostObject] = "";
+		}
+	}
 
 
 // send message to all services
@@ -364,13 +492,15 @@ function            wsOnMessage( evt ){
         if( service.listenGroup === undefined ){
             continue;
         }
+
+	// an plugin can also listen on "", that means ALL requests are also for the plugin
         if( topicGroup != service.listenGroup && service.listenGroup != "" ){
             continue;
         }
 
     // call the function
 		if( service.onMessage !== null && service.onMessage !== undefined ){
-			service.onMessage( topicHostName, topicGroup, topicCommand, jsonObject.payload );
+			service.onMessage( topicHostName, topicGroup, topicCommand, jsonObject.v );
 		}
 
 
@@ -382,10 +512,34 @@ function            wsOnMessage( evt ){
 
 
 function            copilotGetHostName(){
-    wsMessageSend( "localhost", "co", "gethostname", JSON.stringify({}) );
+	wsSendMessage( "pingid", "all", "co", "hostNameGet", "" );
+}
+function			copliotSelectHost( hostName ){
+
+// save the hostname
+	copilot.selectedHostName = hostName;
+
+// show it to the user
+	htmlSelectedHost = document.getElementById( "selectedHost" );
+	if( htmlSelectedHost !== undefined && htmlSelectedHost !== null ){
+		htmlSelectedHost.className = "label label-success";
+		htmlSelectedHost.innerHTML = hostName;
+	}
+
+// notify all plugins/services
+    for( serviceName in copilot.services ){
+    // get the service
+        service = copilot.services[serviceName];
+
+    // call the function
+		if( service.onHostSelected !== null && service.onHostSelected !== undefined ){
+			service.onHostSelected( copilot.selectedHostName );
+		}
+    }
+
 }
 function            copilotPing(){
-    wsMessageSend( "all", "co", "ping", JSON.stringify({}) );
+	wsSendMessage( "pingid", "all", "co", "ping", "" );
 }
 
 
@@ -404,7 +558,6 @@ function            copilotPing(){
 */
 
 messageCreate();
-connStateCreate();
 
 // we connect to the websocket
 wsConnect();

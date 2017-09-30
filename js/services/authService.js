@@ -31,7 +31,7 @@ coreService.onMessage = authOnMessage;
 htmlConnState = document.createElement('a');
 htmlConnState.id = "btnAuthConnect";
 htmlConnState.innerHTML = "<span class=\"glyphicon glyphicon-log-in\"></span> Login";
-htmlConnState.onclick = function(){ authDialogShow(); }
+htmlConnState.onclick = function(){ authRequest(); }
 navAppend( htmlConnState );
 
 htmlLoadFile( "output", "html/authDialog.html" );
@@ -48,6 +48,16 @@ function authOnDisconnect(){
 }
 function authOnMessage( topicHostName, topicGroup, topicCommand, payload ){
 
+// auth methode
+    if( topicCommand == "authMethode" ){
+        if( payload == "none" ){
+            authDialogLoginOk();
+            return;
+        } else {
+            authDialogShow();
+        }
+    }
+
 // login was okay
     if( topicCommand == "loginok" ) authDialogLoginOk();
 
@@ -56,7 +66,7 @@ function authOnAuth( service ){
 
 // hide the dialog
     $("#loginDialog").modal('hide');
-    
+
 // change the Login-Button to Logout
     var htmlBtnConnect =  document.getElementById( "btnAuthConnect" );
     htmlConnState.innerHTML = "<span class=\"glyphicon glyphicon-log-out\"></span> Logout";
@@ -66,6 +76,12 @@ function authOnAuth( service ){
     copilotPing();
 
 }
+
+
+function authRequest(){
+    wsSendMessage( null, null, "co", "authMethodeGet", "" );
+}
+
 
 
 function authDialogShow(){
@@ -81,10 +97,9 @@ function authDialogLogin(){
     jsonObject.user = htmlUsername;
     jsonObject.password = htmlPassword;
 
-    wsMessageSend( null, coreService.listenGroup, "login", JSON.stringify(jsonObject) );
-
 //JSON.stringify(jsonObject)
 //JSON.parse(received_msg);
+	wsSendMessage( null, null, "co", "login", JSON.stringify(jsonObject) );
 
 }
 
