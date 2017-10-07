@@ -4,4 +4,4 @@ if [ "${basepath}" == "." ]; then
 	basepath=$PWD
 fi
 
-chromium --allow-file-access-from-files ${basepath}/index_new.html
+chromium --allow-file-access-from-files ${basepath}/index_new.html &

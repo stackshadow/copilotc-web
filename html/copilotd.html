@@ -3,6 +3,9 @@
 
     <h2>Hosts
 		<div class='btn-group'>
+            <button type='button' class='btn btn-primary' onclick="copilotdHostTableRefresh()">
+                <span class="glyphicon glyphicon-refresh"></span>
+            </button>
 			<button type='button' class='btn btn-primary' onclick="copilotdPing()">Ping</button>
 		</div>
 	</h2>
@@ -28,7 +31,7 @@
 
 
 <!-- Server-Node-Config -->
-	<h2><input id="copilotdServeSelected" type="checkbox" onchange="copilotdServeToggle(this)">Verbindung zu dieser Node</input></h2>
+	<h2><input id="copilotdServeSelected" type="checkbox" onchange="copilotdServeToggle(this)">Server</input></h2>
 	<form class="form-inline">
 		<div class="form-group">
 			<label for="copilotdServeAddr">Bind Adresse</label>
@@ -42,29 +45,51 @@
 	</form>
 
 
-<!-- Signing Requests -->
-    <h2>Signing requests</h2>
-    <table id="signRequestTable" class="table table-striped" >
+
+    <h1>Keys
+        <button type='button' class='btn btn-primary' onclick="unacceptedKeysRefresh(); acceptedKeysRefresh();">
+            <span class="glyphicon glyphicon-refresh"></span>
+        </button>
+    </h1>
+
+<!-- Unsigned keys -->
+    <h2>Unsigned keys</h2>
+    <table id="unacceptedKeysTable" class="table table-striped" >
 
         <thead>
             <tr>
-                <th>Node</th>
 				<th>Fingerprint</th>
                 <th>Aktion</th>
             </tr>
         </thead>
 
-        <tbody id="signRequestValues"></tbody>
+        <tbody id="unacceptedKeyValues"></tbody>
+
+    </table>
+
+<!-- Signed Key -->
+    <h2>Signed keys</h2>
+    <table id="acceptedKeysTable" class="table table-striped" >
+
+        <thead>
+            <tr>
+				<th>Fingerprint</th>
+                <th>Aktion</th>
+            </tr>
+        </thead>
+
+        <tbody id="acceptedKeyValues"></tbody>
 
     </table>
 
 
+<!--
 	<h2>MQTT</h2>
 	<h3>
 		<button type="button" class="btn btn-primary">MQTT-Clients <span id="mqttClientCount" class="badge">0</span></button>
 		<span id="mqttClientState" class="label label-default">unknown state</span>
 	</h3>
-
+-->
 
 </div>
 

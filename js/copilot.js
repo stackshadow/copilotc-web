@@ -276,12 +276,13 @@ function            wsDisconnect(){
     copilot.ws = null;
     copilot.wsConnected = false;
 }
-function			wsSendMessage( id, hostname, group, command, payloadString ){
+function			wsSendMessage( id, targetHostName, group, command, payloadString ){
 
 // build message
 	var jsonMessage = {};
 	jsonMessage["id"] = id;
-	jsonMessage["h"] = hostname;
+    jsonMessage["s"] = "";
+	jsonMessage["t"] = targetHostName;
 	jsonMessage["g"] = group;
 	jsonMessage["c"] = command;
 
@@ -292,11 +293,11 @@ function			wsSendMessage( id, hostname, group, command, payloadString ){
 	}
 
 // no hostname
-	if( hostname === null || hostname === undefined ){
+	if( targetHostName === null || targetHostName === undefined ){
 		if( copilot.selectedHostName === null ){
-			jsonMessage["h"] = copilot.myhostname
+			jsonMessage["t"] = copilot.myhostname
 		} else {
-			jsonMessage["h"] = copilot.selectedHostName
+			jsonMessage["t"] = copilot.selectedHostName
 		}
 	}
 
@@ -443,7 +444,7 @@ function            wsOnMessage( evt ){
     commandString = JSON.stringify(jsonObject);
 
 // we need the hostname for some plugins
-    var topicHostName = jsonObject.h;
+    var topicHostName = jsonObject.s;
     var topicGroup = jsonObject.g;
     var topicCommand = jsonObject.c;
 

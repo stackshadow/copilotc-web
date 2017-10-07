@@ -35,6 +35,16 @@ function copilotdHostTableClear(){
 }
 
 
+function copilotdHostTableRefresh(){
+    wsSendMessage( null, null, "co", "nodesGet", "" );
+}
+
+
+function copilotdHostTableVersionRefresh( nodeName ){
+    wsSendMessage( null, nodeName, "co", "versionGet", "" );
+}
+
+
 function copilotdHostTableAppend( htmlTableBody, nodename, hostname, port, typ, version ){
 
 // host already exist ?
@@ -87,8 +97,10 @@ function copilotdHostTableAppend( htmlTableBody, nodename, hostname, port, typ, 
 // SSH-Info
 	htmlActionShowSSHInfo = document.createElement('div');
 	htmlActionShowSSHInfo.className = "btn-group";
-	htmlActionShowSSHInfo.innerHTML = "<button type='button' class='btn btn-primary' onclick=\"copliotSelectHost('"+nodename+"')\">Select Host</button>";
+    htmlActionShowSSHInfo.innerHTML  = "<div class='btn-group'>";
+	htmlActionShowSSHInfo.innerHTML += "<button type='button' class='btn btn-primary' onclick=\"copliotSelectHost('"+nodename+"')\">Select Host</button>";
 	htmlActionShowSSHInfo.innerHTML += "<button type='button' class='btn btn-danger' onclick=\"copliotdNodeRemove('"+nodename+"')\">Remove</button>";
+	htmlActionShowSSHInfo.innerHTML += "</div>";
 	newAction.appendChild( htmlActionShowSSHInfo );
 	newRow.appendChild( newAction );
 
@@ -230,14 +242,110 @@ function copilotdServerSet( host, port, enabled ){
 }
 
 
+// ###################################### unaccepted keys ######################################
 
-// ###################################### Nodes-State ######################################
-
-function copilotdNodesStateGet(){
-
-    wsSendMessage( null, copilot.selectedHostName, "cocom", "stateGet", "" );
-
+function unacceptedKeysRefresh(){
+    htmlTableBody = document.getElementById( "unacceptedKeyValues" );
+    htmlTableBody.innerHTML = "";
+    wsSendMessage( null, copilot.selectedHostName, "cocom", "requestKeysGet", "" );
 }
+
+
+function unacceptedKeysAdd( htmlTableBody, fingerprint ){
+
+// host already exist ?
+	newRow = document.getElementById( "copilotd_unacceptedKey_" + fingerprint );
+	if( newRow !== undefined && newRow !== null ){
+		messageLog( "copilotd.js", "key '" + fingerprint + "' already exist in table." );
+		return;
+	}
+
+// row
+	newRow = document.createElement('tr');
+	newRow.id = "copilotd_unacceptedKey_" + fingerprint;
+	//newRow.className = "danger";
+
+// state
+	htmlFingerprint = document.createElement('td');
+	htmlFingerprint.innerHTML  = fingerprint;
+	newRow.appendChild( htmlFingerprint );
+
+// actions
+	newAction = document.createElement('td');
+// SSH-Info
+	newActionDiv = document.createElement('div');
+	newActionDiv.className = "btn-group";
+    newActionDiv.innerHTML += "<div class='btn-group'>";
+    newActionDiv.innerHTML += "<button type='button' class='btn btn-success' onclick=\"unacceptedKeyAccept('"+fingerprint+"')\">Accept</button>";
+    newActionDiv.innerHTML += "<button type='button' class='btn btn-info' onclick=\"unacceptedKeyRemove('"+fingerprint+"')\">Remove</button>";
+	newActionDiv.innerHTML += "</div>";
+    newAction.appendChild( newActionDiv );
+	newRow.appendChild( newAction );
+
+// append row to the table
+	htmlTableBody.appendChild( newRow );
+}
+
+
+function unacceptedKeyAccept( fingerprint ){
+    wsSendMessage( null, copilot.selectedHostName, "cocom", "requestKeyAccept", fingerprint );
+    acceptedKeysRefresh();
+}
+
+
+function unacceptedKeyRemove( fingerprint ){
+    wsSendMessage( null, copilot.selectedHostName, "cocom", "requestKeyRemove", fingerprint );
+}
+
+
+// ###################################### accepted keys ######################################
+
+function acceptedKeysRefresh(){
+    htmlTableBody = document.getElementById( "acceptedKeyValues" );
+    htmlTableBody.innerHTML = "";
+    wsSendMessage( null, copilot.selectedHostName, "cocom", "acceptedKeysGet", "" );
+}
+
+
+function acceptedKeysAdd( htmlTableBody, fingerprint ){
+
+// host already exist ?
+	newRow = document.getElementById( "copilotd_acceptedKey_" + fingerprint );
+	if( newRow !== undefined && newRow !== null ){
+		messageLog( "copilotd.js", "key '" + fingerprint + "' already exist in table." );
+		return;
+	}
+
+// row
+	newRow = document.createElement('tr');
+	newRow.id = "copilotd_acceptedKey_" + fingerprint;
+	//newRow.className = "danger";
+
+// state
+	htmlFingerprint = document.createElement('td');
+	htmlFingerprint.innerHTML  = fingerprint;
+	newRow.appendChild( htmlFingerprint );
+
+// actions
+	newAction = document.createElement('td');
+// SSH-Info
+	newActionDiv = document.createElement('div');
+	newActionDiv.className = "btn-group";
+    newActionDiv.innerHTML += "<div class='btn-group'>";
+    newActionDiv.innerHTML += "<button type='button' class='btn btn-info' onclick=\"acceptedKeyRemove('"+fingerprint+"')\">Remove</button>";
+	newActionDiv.innerHTML += "</div>";
+    newAction.appendChild( newActionDiv );
+	newRow.appendChild( newAction );
+
+// append row to the table
+	htmlTableBody.appendChild( newRow );
+}
+
+
+function acceptedKeyRemove( fingerprint ){
+    wsSendMessage( null, copilot.selectedHostName, "cocom", "acceptedKeyRemove", fingerprint );
+}
+
 
 
 
@@ -274,13 +382,18 @@ function copilotdShow(){
 			//copilotdHostTableLoad();
 
 		// call command to get known hosts from copilotd
-			wsSendMessage( null, null, "co", "knownHostsGet", "" );
+            copilotdHostTableRefresh();
 
         // get server info
             wsSendMessage( null, null, "cocom", "serverConfigGet", "" );
 
+        // get the list with not authorized keys
+            unacceptedKeysRefresh();
+            acceptedKeysRefresh();
+
 		// request infos about mqtt-server
 		//	wsSendMessage( null, null, "mqtt", "getinfos", "" );
+
 
 
 
@@ -329,7 +442,7 @@ function copilotdOnMessage( topicHostName, topicGroup, topicCommand, payload ){
 
 	}
 
-	if( topicCommand == "knownHosts" ){
+	if( topicCommand == "nodes" ){
 
         htmlTableBody =  document.getElementById( "copilotd_hosts_values" );
         htmlTableBody.innerHTML = "";
@@ -344,24 +457,57 @@ function copilotdOnMessage( topicHostName, topicGroup, topicCommand, payload ){
             copilotdHostTableAppend( htmlTableBody, nodeName, nodeHost, nodePort, nodeType, "" );
 
         // request version of copilotd
-            wsSendMessage( null, nodeName, "co", "copilotdVersionGet", "" );
+            wsSendMessage( null, nodeName, "co", "versionGet", "" );
 
         }
 
 	}
 
-	if( topicCommand == "copilotdVersion" ){
+	if( topicCommand == "version" ){
 		copliotdHostTableSetVersion( topicHostName, payload );
 	}
 
     if( topicCommand == "serverConfig" ){
         jsonPayload = JSON.parse(payload);
-        if( jsonPayload.enabled == 0 ){
-            copilotdServerSet( undefined, undefined, jsonPayload.enabled );
-        } else {
-            copilotdServerSet( jsonPayload.host, jsonPayload.port, jsonPayload.enabled );
-        }
+        hostName = undefined;
+        hostPort = undefined;
+        hostEnabled = undefined;
+
+        if( 'host' in jsonPayload ) hostName = jsonPayload.host;
+        if( 'port' in jsonPayload ) hostPort = jsonPayload.port;
+        if( 'enabled' in jsonPayload ) hostEnabled = jsonPayload.enabled;
+
+        copilotdServerSet( hostName, hostPort, hostEnabled );
+        return;
     }
+
+    if( topicCommand == "requestKeys" ){
+
+        htmlTableBody = document.getElementById( "unacceptedKeyValues" );
+        htmlTableBody.innerHTML = "";
+
+        jsonPayload = JSON.parse(payload);
+        for( keyFingerprint in jsonPayload ){
+            unacceptedKeysAdd( htmlTableBody, keyFingerprint );
+        }
+
+    }
+
+
+    if( topicCommand == "acceptedKeys" ){
+
+        htmlTableBody = document.getElementById( "acceptedKeyValues" );
+        htmlTableBody.innerHTML = "";
+
+        jsonPayload = JSON.parse(payload);
+        for( keyFingerprint in jsonPayload ){
+            acceptedKeysAdd( htmlTableBody, keyFingerprint );
+        }
+
+    }
+
+
+
 
 	return;
 }
