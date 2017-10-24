@@ -1,0 +1,142 @@
+
+<div id="copilotd" class="container col-md-12">
+
+
+
+
+
+    <h2>Hosts
+		<div class='btn-group'>
+            <button type='button' class='btn btn-primary' onclick="copilotdHostTableRefresh()">
+                <span class="glyphicon glyphicon-refresh"></span>
+            </button>
+			<button type='button' class='btn btn-primary' onclick="copilotdPing()">Ping</button>
+            <button type='button' class='btn btn-primary' onclick="copilotdNodeAdd()">Add</button>
+		</div>
+	</h2>
+
+
+
+
+
+
+
+
+<!-- Table of nodes  -->
+    <table id="nodeTable" class="table table-striped" >
+
+        <thead>
+            <tr>
+                <th>Node</th>
+				<th></th>
+				<th>Type</th>
+				<th>Host</th>
+                <th>Port</th>
+				<!-- <th>Port</th> -->
+                <th>Copilot-Version</th>
+                <th>Aktion</th>
+            </tr>
+        </thead>
+
+        <tbody id="copilotd_hosts_values"></tbody>
+
+    </table>
+
+
+<!-- Server-Node-Config -->
+	<h2><input id="copilotdServeSelected" type="checkbox" onchange="copilotdServeToggle(this)">Server</input></h2>
+	<form class="form-inline">
+		<div class="form-group">
+			<label for="copilotdServeAddr">Bind Adresse</label>
+			<input id="copilotdServeAddr" type="text" class="form-control" placeholder="::" disabled></input>
+		</div>
+		<div class="form-group">
+			<label for="copilotdServePort">Port</label>
+			<input id="copilotdServePort" type="text" class="form-control" placeholder="4567" disabled></input>
+		</div>
+        <button type="button" class="btn btn-primary" onclick="copilotdServerSave()">Speichern</button>
+	</form>
+
+
+
+    <h1>Keys
+        <button type='button' class='btn btn-primary' onclick="unacceptedKeysRefresh(); acceptedKeysRefresh();">
+            <span class="glyphicon glyphicon-refresh"></span>
+        </button>
+    </h1>
+
+<!-- Unsigned keys -->
+    <table id="unacceptedKeysTable" class="table table-striped" >
+
+        <thead>
+            <tr>
+				<th>Not Accepted keys</th>
+                <th>Aktion</th>
+            </tr>
+        </thead>
+        <tbody id="unacceptedKeyValues"></tbody>
+
+
+        <thead>
+            <tr>
+				<th>Accepted Keys</th>
+                <th>Aktion</th>
+            </tr>
+        </thead>
+        <tbody id="acceptedKeyValues"></tbody>
+
+    </table>
+
+
+<!-- Modal -->
+    <div id="nodeClientAddDialog" class="modal fade" role="dialog">
+
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">x</button>
+                    <h4 class="modal-title">Add client connetion</h4>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label for="nodeClientAddNodeName">Name:</label>
+                        <input id="nodeClientAddNodeName" type="text" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nodeClientAddHostName">Hostname:</label>
+                        <input id="nodeClientAddHostName" type="text" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nodeClientAddHostPort">Port:</label>
+                        <input id="nodeClientAddHostPort" type="text" class="form-control" />
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button id="btnDBConnect" type="button" class="btn btn-primary" onclick="copilotdNodeAddSave()" >Add</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+<!--
+	<h2>MQTT</h2>
+	<h3>
+		<button type="button" class="btn btn-primary">MQTT-Clients <span id="mqttClientCount" class="badge">0</span></button>
+		<span id="mqttClientState" class="label label-default">unknown state</span>
+	</h3>
+-->
+
+</div>
+
