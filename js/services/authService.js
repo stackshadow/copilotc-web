@@ -26,6 +26,8 @@ coreService.onAuth = authOnAuth;
 coreService.onConnect = authOnConnect;
 coreService.onDisconnect = authOnDisconnect;
 coreService.onMessage = authOnMessage;
+coreService.onHostSelected = null;
+coreService.onSimulation = null;
 
 // Navigation bar
 htmlConnState = document.createElement('a');

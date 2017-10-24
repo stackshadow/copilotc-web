@@ -29,15 +29,25 @@ copilot.hostnames = {};
 copilot.services = [];
 copilot.myhostname = "localhost";
 copilot.selectedHostName = null;
+copilot.simulation = false;
+
+// events
+copilot.onHostSelected = null;
+
 
 /**
 @brief Load java-script file and init
 */
-function            jsLoadFile( fileName, initFunctionName ){
+function            jsLoadFile( fileName, finishLoadingFunction = null ){
 
 // already exists ?
     var script =  document.getElementById( "js_" + fileName );
     if( script !== null ){
+        console.log( "Script \"js_" + fileName + "\" already loaded" );
+    // already loaded
+        if( finishLoadingFunction !== null ){
+            finishLoadingFunction();
+        }
         return;
     }
 
@@ -47,20 +57,19 @@ function            jsLoadFile( fileName, initFunctionName ){
     script.src = fileName;
     script.id = "js_" + fileName;
 
+
+// use function
+    if( finishLoadingFunction !== null ){
 // Then bind the event to the callback function.
 // There are several events for cross browser compatibility.
-//    script.onreadystatechange = callback;
-//    script.onload = callback;
+        script.onreadystatechange = finishLoadingFunction;
+        script.onload = finishLoadingFunction;
+    }
 
-    // Fire the loading
+
+// Fire the loading
     head.appendChild(script);
 
-// run the script
-/*
-    if( typeof me.onChange === "function" ){
-
-    }
-*/
 }
 function            htmlLoadFile( id, fileName, finishLoadingFunction = null ){
 // container
@@ -135,13 +144,16 @@ function            messageHide(){
 }
 function            messageInfo( message, timeout = 0 ){
 
+/*
 // container
     var htmlContainer =  document.getElementById( "message" );
-    htmlContainer.className = "alert alert-info";
+    //htmlContainer.className = "alert alert-info";
+    htmlContainer.className = "toast-pf toast-pf-max-width toast-pf-top-right alert alert-success alert-dismissable"
 
 // icon
     var htmlIcon =  document.getElementById( "messageIcon" );
-    htmlIcon.className = "glyphicon glyphicon-ok";
+    //htmlIcon.className = "glyphicon glyphicon-ok";
+    htmlIcon.className = "pficon pficon-ok";
 
 // message
     var htmlMessage =  document.getElementById( "messageText" );
@@ -153,17 +165,35 @@ function            messageInfo( message, timeout = 0 ){
     if( timeout > 0 ){
         setTimeout( messageHide, timeout * 1000 );
     }
+*/
+var notify = $.notify({
+	icon: 'glyphicon glyphicon-ok',
+    title: 'Info:',
+    message: message
+},{
+    type: 'info',
+    placement: {
+        from: "bottom",
+        align: "right"
+    },
+    delay: 3000,
+});
+
 
 }
 function            messageAlert( message, timeout = 0 ){
 
+/*
 // container
     var htmlContainer =  document.getElementById( "message" );
-    htmlContainer.className = "alert alert-danger";
+    //htmlContainer.className = "alert alert-danger";
+    htmlContainer.className = "toast-pf toast-pf-max-width toast-pf-top-right alert alert-danger alert-dismissable"
+
 
 // icon
     var htmlIcon =  document.getElementById( "messageIcon" );
-    htmlIcon.className = "glyphicon glyphicon-exclamation-sign";
+    //htmlIcon.className = "glyphicon glyphicon-exclamation-sign";
+    htmlIcon.className = "pficon pficon-error-circle-o";
 
 // message
     var htmlMessage =  document.getElementById( "messageText" );
@@ -175,11 +205,25 @@ function            messageAlert( message, timeout = 0 ){
     if( timeout > 0 ){
         setTimeout( messageHide, timeout * 1000 );
     }
+*/
+var notify = $.notify({
+	icon: 'glyphicon glyphicon-ok',
+    title: 'Error:',
+    message: message
+},{
+    type: 'alert',
+    placement: {
+        from: "bottom",
+        align: "right"
+    },
+    delay: 3000,
+});
 
 }
 function            messageLog( section, message ){
     console.log(  section + ": " + message );
 }
+
 
 // the connection state
 function            connStateCreate(){
@@ -223,6 +267,13 @@ function            navAppend( htmlElement ){
 }
 function            settingAppend( htmlElement ){
     var settingsDropDown =  document.getElementById( "settingsDropDown" );
+
+// check if element already exist
+    var setting = document.getElementById( htmlElement.id );
+    if( setting !== null ){
+        return;
+    }
+
 
     var htmlNavElement = document.createElement('li');
     htmlNavElement.appendChild( htmlElement );
@@ -301,7 +352,25 @@ function			wsSendMessage( id, targetHostName, group, command, payloadString ){
 		}
 	}
 
+// simulation active ?
+    if( copilot.simulation == true ){
 
+    // call simulation function for all services
+        for( serviceName in copilot.services ){
+
+        // get the service
+            service = copilot.services[serviceName];
+
+        // call the function
+            if( service.onSimulation !== null && service.onSimulation !== undefined ){
+                service.onSimulation( topicHostName, topicGroup, topicCommand, payload );
+            }
+
+
+        }
+
+        return;
+    }
 
 	if( typeof payloadString == "object" ){
 		jsonMessage["v"] = payloadString;
@@ -444,28 +513,36 @@ function            wsOnMessage( evt ){
     commandString = JSON.stringify(jsonObject);
 
 // we need the hostname for some plugins
-    var topicHostName = jsonObject.s;
-    var topicGroup = jsonObject.g;
-    var topicCommand = jsonObject.c;
+    var hostName = jsonObject.s;
+    var group = jsonObject.g;
+    var command = jsonObject.c;
+    var payload = jsonObject.v;
+
+// call the message handler
+    copilot.onMessage( hostName, group, command, payload );
+
+
+};
+copilot.onMessage = function( topicHostName, topicGroup, topicCommand, payload ){
 
 // core commands
     if( topicCommand == "msgInfo" ){
-        var message = jsonObject.v;
+        var message = payload;
         if( message === undefined ) return;
         messageInfo( message, 10 );
     }
     if( topicCommand == "msgError" ){
-        var message = jsonObject.v;
+        var message = payload;
         if( message === undefined ) return;
         messageAlert( message );
     }
 
     if( topicGroup == "co" && topicCommand == "hostName" ){
-        copilot.myhostname = jsonObject.v;
+        copilot.myhostname = payload;
 		messageLog( "Our Hostname: ", copilot.myhostname );
 
 	// and we select it by default ;)
-		copliotSelectHost( copilot.myhostname );
+		copliotNodeSelect( copilot.myhostname );
     }
 
 // if we get a pong ( an ping answer ) than we just remember the hostname
@@ -475,8 +552,8 @@ function            wsOnMessage( evt ){
     }
 
 // this command just remember the hostname for later use
-	if( topicGroup == "co" && topicCommand == "knownHosts" ){
-		jsonPayload = JSON.parse(jsonObject.v);
+	if( topicGroup == "co" && topicCommand == "nodes" ){
+		jsonPayload = JSON.parse(payload);
 		for( hostObject in jsonPayload ){
 			copilot.hostnames[hostObject] = "";
 		}
@@ -501,21 +578,19 @@ function            wsOnMessage( evt ){
 
     // call the function
 		if( service.onMessage !== null && service.onMessage !== undefined ){
-			service.onMessage( topicHostName, topicGroup, topicCommand, jsonObject.v );
+			service.onMessage( topicHostName, topicGroup, topicCommand, payload );
 		}
 
 
     }
 
-
-
-};
+}
 
 
 function            copilotGetHostName(){
 	wsSendMessage( "pingid", "all", "co", "hostNameGet", "" );
 }
-function			copliotSelectHost( hostName ){
+function			copliotNodeSelect( hostName ){
 
 // save the hostname
 	copilot.selectedHostName = hostName;
@@ -538,6 +613,17 @@ function			copliotSelectHost( hostName ){
 		}
     }
 
+// call the core function
+    if( copilot.onHostSelected !== null ){
+        copilot.onHostSelected( copilot.selectedHostName );
+    }
+
+// notify user
+    messageInfo( "Host \"" + copilot.selectedHostName + "\" selected" );
+
+}
+function            copilotNodeRemove( nodeName ){
+    wsSendMessage( null, copilot.selectedHostName, "co", "nodeRemove", nodeName );
 }
 function            copilotPing(){
 	wsSendMessage( "pingid", "all", "co", "ping", "" );
@@ -558,7 +644,7 @@ function            copilotPing(){
 
 */
 
-messageCreate();
+//messageCreate();
 
 // we connect to the websocket
 wsConnect();

@@ -19,7 +19,20 @@
         <link href="css/doDB.css" rel="stylesheet">
 
 
+        <!-- Patternfly -->
+        <link  href="libs/patternfly/css/patternfly.min.css" rel="stylesheet">
+        <link  href="libs/patternfly/css/patternfly-additions.min.css" rel="stylesheet">
+        <script src="libs/patternfly/js/patternfly.min.js"></script>
 
+        <!-- d3 -->
+        <script src="libs/d3/d3.min.js"></script>
+
+        <!-- c3 -->
+        <link href="libs/c3/c3.min.css" rel="stylesheet">
+        <script src="libs/c3/c3.min.js"></script>
+
+        <!-- notify -->
+        <script src="libs/notify.min.js"></script>
 
 	</head>
 
@@ -27,7 +40,7 @@
 	<body>
 
 <!-- Navigation -->
-    <nav class="navbar navbar-inverse">
+    <nav class="navbar navbar-inverse navbar-fixed-top sticky">
         <div class="container-fluid">
 
             <div class="navbar-header">
@@ -53,18 +66,37 @@
         </div>
     </nav>
 
+<!-- Message
+    <div id="message" class="toast-pf toast-pf-max-width toast-pf-top-right alert alert-success alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+            <span class="pficon pficon-close"></span>
+        </button>
 
+        <span id="messageIcon" class="pficon pficon-ok"></span>
+        <div id="messageText" class="pull-right toast-pf-action">
+            <a href="#"></a>
+        </div>
+    </div>
+-->
 <!--
 	<div class="btn-group">
 		<button type="button" class="btn btn-default btn-sm" onclick="WebSocketPing()">Ping</button>
 		<button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal">Open Modal</button>
 	</div>
 -->
+
+<!-- because the headline is always on to, its seperated from the page layoutz
+so we
+ -->
+    <div style="padding:30px;" />
+
+
     <script src="js/copilot.js"></script>
-    <script src="js/services/copilotd.js"></script>
+    <script src="services/copilotd/copilotd.js"></script>
     <script src="js/services/authService.js"></script>
-    <script src="js/services/nftService.js"></script>
-    <script src="js/services/ldapUsersService.js"></script>
+    <script src="services/nft/nftService.js"></script>
+    <script src="services/sysstate/sysstateService.js"></script>
+    <script src="services/simpleldap/simpleldapService.js"></script>
 <!--    <script src="js/services/doDBDConnectionsService.js"></script> -->
 
 
