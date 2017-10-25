@@ -1,0 +1,74 @@
+
+
+
+<div class="btn-group">
+    <button type="button" class="btn btn-success" id="ldapConnectBtn" onclick="ldapConnect();">
+    <span class="glyphicon glyphicon-log-in"></span> Verbinden</button>
+
+    <button type="button" class="btn btn-info" id="ldapConnectEditBtn" onclick="ldapConnectionEdit();">
+    <span class="glyphicon glyphicons-edit"></span> LDAP-Verbindung bearbeiten</button>
+</div>
+
+
+<h1>Benutzer
+    <button type='button' class='btn btn-primary disabled' onclick="">
+        <span class="glyphicon glyphicon-refresh"></span>
+    </button>
+    <button type='button' class='btn btn-primary disabled' onclick="">
+        <span class="glyphicon glyphicon-plus"></span>
+    </button>
+</h1>
+
+<!-- Groups -->
+<table id="simpleldapGroupTable" class="table table-striped" >
+
+    <thead>
+        <tr>
+            <th>dn</th>
+            <th>Benutzername</th>
+            <th>Aktion</th>
+        </tr>
+    </thead>
+    <tbody id="simpleldapGroupValues" class='disabled'></tbody>
+
+</table>
+
+
+<h1>Gruppen
+    <button type='button' class='btn btn-primary disabled' onclick="">
+        <span class="glyphicon glyphicon-refresh"></span>
+    </button>
+    <button type='button' class='btn btn-primary disabled' onclick="">
+        <span class="glyphicon glyphicon-plus"></span>
+    </button>
+</h1>
+
+<!-- Groups -->
+<table id="simpleldapGroupTable" class="table table-striped" >
+
+    <thead>
+        <tr>
+            <th>dn</th>
+            <th>Gruppenname</th>
+            <th>Beschreibung</th>
+            <th>Aktion</th>
+        </tr>
+    </thead>
+    <tbody id="simpleldapGroupValues" class='disabled'></tbody>
+
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
