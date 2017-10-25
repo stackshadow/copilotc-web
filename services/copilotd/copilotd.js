@@ -9,7 +9,7 @@ copliotdService.onConnect = null;
 copliotdService.onDisconnect = null;
 copliotdService.onMessage = null;
 copliotdService.onHostSelected = null;
-copliotdService.onSimulation = null;
+copliotdService.onSimulation = copilotdSimulation;
 
 // local
 
@@ -183,6 +183,17 @@ function copilotdOnMessage( topicHostName, topicGroup, topicCommand, payload ){
 	return;
 }
 
+
+function copilotdSimulation( topicHostName, topicGroup, topicCommand, payload ){
+
+    if( topicCommand == "hostNameGet" ){
+
+
+        copilot.onMessage( "simulation", "co", "hostName", "simulation" );
+    }
+
+
+}
 
 
 function copilotdPing(){
@@ -576,3 +587,4 @@ function acceptedKeyRemove( fingerprint ){
 
 
 wsServiceRegister( copliotdService );
+copilotGetHostName();
