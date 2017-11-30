@@ -1,6 +1,35 @@
 
-var service = copilot.services["nft"];
+var service = copilot.services["sysstate"];
 service.charts = [];
+service.onMessage = sysStateOnMessage;
+
+
+
+
+function        sysStateOnMessage( topicHostName, topicGroup, topicCommand, payload ){
+
+
+    if( topicCommand == "cmdTryOut" ){
+
+    // get chain
+        var jsonPayload = JSON.parse(payload);
+
+        document.getElementById( "sysstateCmdOutput" ).value = jsonPayload.out;
+
+        var htmlHealt = document.getElementById( "sysstateCmdHealth" );
+        htmlHealt.innerHTML = "<span>" + jsonPayload.health + "%</span>";
+        htmlHealt.style.width = jsonPayload.health + "%";
+        htmlHealt.val = jsonPayload.health;
+
+        //document.getElementById( "sysstateCmdHealth" ).style.width = jsonPayload.health + "%";
+        //document.getElementById( "sysstateCmdHealth" ).aria-valuenow = jsonPayload.health;
+        //$('#sysstateCmdHealth').val = jsonPayload.health;
+
+        return;
+    }
+
+
+}
 
 
 
@@ -85,5 +114,23 @@ function        sysStateNodeHealthSet( nodeName, value){
 
 }
 
+
+function        sysstateTest(){
+
+   command = document.getElementById( "sysstateCmd" ).value;
+   commandMin = document.getElementById( "sysstateMin" ).value;
+   commandMax = document.getElementById( "sysstateMax" ).value;
+
+
+    var jsonCommand = {}
+    jsonCommand['cmd'] = command;
+    jsonCommand['min'] = parseInt(commandMin);
+    jsonCommand['max'] = parseInt(commandMax);
+
+    wsSendMessage( null, copilot.selectedHostName, "sysstate", "cmdTry", JSON.stringify(jsonCommand) );
+
+
+
+}
 
 
