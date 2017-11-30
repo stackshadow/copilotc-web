@@ -6,7 +6,10 @@ service.onMessage = nftOnMessage;
 // private vars
 service.htmlRuleTableSelected = null;
 service.htmlRuleHeaderSelected = null;
-
+service.htmlChainButtonActive = null;
+service.jsonChains = {};
+service.actualChainName = null;
+service.actualRulesArray = null;
 
 
 function nftOnMessage( topicHostName, topicGroup, topicCommand, payload ){
@@ -29,10 +32,36 @@ function nftOnMessage( topicHostName, topicGroup, topicCommand, payload ){
         nftTableAppendRules( jsonPayload );
         return;
     }
+
+
+    if( topicCommand == "chain" ){
+
+    // get chain
+        var jsonPayload = JSON.parse(payload);
+        for( chainName in jsonPayload ){
+            service.actualChainName = chainName;
+            service.actualRulesArray = jsonPayload[chainName];
+        }
+
+        nftTableChainShow();
+
+        return;
+    }
+
+
     if( topicCommand == "saveok" ){
         messageInfo( "Erfolgreich gespeichert.", 7 );
         return;
     }
+
+
+    if( topicCommand == "chainsCount" ){
+    // we need to parse the string to json
+        service.jsonChains = JSON.parse(payload);
+        nftChainBarInit();
+        return;
+    }
+
 
 }
 
@@ -89,7 +118,8 @@ function nftLoad(){
     var nftChainTabBar = document.getElementById('nftChainTable');
     nftChainTabBar.style.display = 'none';
 */
-    nftRequestChains();
+    //nftRequestChains();
+    nftChainsCountRequest();
 }
 
 
@@ -97,6 +127,7 @@ function nftLoad(){
 
 var htmlRuleHeaderSelected = null;
 var nftRules = null;
+
 
 function nftRequestChains(){
     var service = copilot.services["nft"];
@@ -114,6 +145,152 @@ function nftRequestChains(){
     document.getElementById('nftRules_forward').style.display = 'none';
     document.getElementById('nftRules_output').style.display = 'none';
     document.getElementById('nftRules_postrouting').style.display = 'none';
+
+}
+
+
+
+
+
+// ######################################################## Tabs ########################################################
+
+function nftChainBarInit(){
+
+    for( jsonChainName in service.jsonChains ){
+        jsonChainCount = service.jsonChains[jsonChainName];
+        nftChainBarAppend( jsonChainName, jsonChainCount );
+        nftTableAppend( jsonChainName );
+    }
+
+// show chain tabs
+    var nftChainTabBar = document.getElementById('nftChainTabBar');
+    nftChainTabBar.style.display = '';
+}
+
+
+function nftChainBarAppend( chainName, chainCount ){
+
+// get the tabbar
+    var tabBar = document.getElementById( 'nftChainTabBar' );
+
+// find
+    var tabElement = document.getElementById( "nftChainTabElement_" + chainName );
+    if( tabElement !== null ){
+        var tabElementBadge = document.getElementById( "nftChainCount_" + chainName );
+        tabElementBadge.innerHTML = chainCount;
+        return;
+    }
+
+// tab element
+    var tabElement = document.createElement('li');
+    tabElement.id = "nftChainTabElement_" + chainName;
+    tabElement.onclick = function(){ nftChainClicked(tabElement,chainName); };
+
+// <a href="#" >
+    var tabElementContainer = document.createElement('a');
+    tabElementContainer.href = "#";
+    tabElementContainer.innerHTML = chainName;
+
+// badge
+    var tabElementBadge = document.createElement('span');
+    tabElementBadge.id = "nftChainCount_" + chainName;
+    tabElementBadge.className = "badge";
+    tabElementBadge.innerHTML = chainCount;
+
+// append button
+/*
+    var tabElementButton = document.createElement('button');
+    tabElementButton.className = "btn btn-success";
+    tabElementButton.onclick = function(){ nftDialogRule(chainName,-1); };
+    tabElementButton.innerHTML = "<span class=\"glyphicon glyphicon-plus\"></span>"
+*/
+
+// build element
+    tabElement.appendChild( tabElementContainer );
+    tabElementContainer.appendChild( tabElementBadge );
+    //tabElementContainer.appendChild( tabElementButton );
+    tabBar.appendChild( tabElement );
+
+
+}
+
+
+function nftChainClicked( button, chainName ){
+    var nftService = copilot.services["nft"];
+
+// set the old button
+    if( nftService.htmlChainButtonActive !== null ){
+        nftService.htmlChainButtonActive.removeAttribute("class");
+    }
+
+// get the append button
+    var htmlAppendButton = document.getElementById( "nftRuleAppendButton" );
+    htmlAppendButton.innerHTML = "Hinzufügen zu " + chainName;
+    htmlAppendButton.onclick = function(){ nftDialogCustomRuleEdit(chainName,-1); };
+
+    nftTableChainRequest( chainName );
+/*
+    if( nftService.htmlChainButtonActive !== null ){
+        nftService.htmlChainButtonActive.removeAttribute("class");
+
+        var nftRules = document.getElementById('nftRules_' + chainName);
+        nftRules.style.display = 'none';
+    }
+
+    nftService.htmlRuleHeaderSelected = button;
+    nftService.htmlRuleHeaderSelected.className = 'active';
+
+// show the table
+    var nftChainTable = document.getElementById('nftChainTable');
+    nftChainTable.style.display = '';
+
+
+// hide old rule
+    if( nftService.htmlRuleTableSelected !== null ){
+        nftService.htmlRuleTableSelected.style.display = 'none';
+    }
+// hide all other rules
+    document.getElementById('nftRules_prerouting').style.display = 'none';
+    document.getElementById('nftRules_input').style.display = 'none';
+    document.getElementById('nftRules_forward').style.display = 'none';
+    document.getElementById('nftRules_output').style.display = 'none';
+    document.getElementById('nftRules_postrouting').style.display = 'none';
+
+// show new rule
+    var nftRules = document.getElementById('nftRules_' + chainName);
+    nftRules.style.display = '';
+    nftService.htmlRuleTableSelected = nftRules;
+*/
+
+}
+
+
+
+
+// ######################################################## tables ########################################################
+
+function nftTableAppend( chainName ){
+
+
+// get the tabbar
+    var tableChainBody = document.getElementById( 'nftChains' );
+    if( tableChainBody === null ) return;
+    tableChainBody.style.display = '';
+
+// append new table
+    var tabElement = document.createElement( 'tbody' );
+    tabElement.id = 'nftChainTable_' + chainName;
+    //tabElement.style.display = 'none';
+    tableChainBody.appendChild( tabElement );
+
+// show the main table
+    nftChainTable = document.getElementById( 'nftChainTable' );
+    nftChainTable.style.display = '';
+
+}
+
+
+function nftTableShow( chainName ){
 
 }
 
@@ -148,11 +325,31 @@ function nftTableAppendRules( jsonRules ){
 }
 
 
+function nftTableChainShow(){
 
-function nftTableAppendRule( chainName, jsonRule ){
+// vars
+    var service = copilot.services["nft"];
+
+
+// clear table rules
+    var nftTableRules = document.getElementById( 'nftTableRules' );
+    nftTableRules.innerHTML = "";
+
+
+// append all rules
+    for( ruleIndex in service.actualRulesArray ){
+        jsonRule = service.actualRulesArray[ruleIndex];
+        nftTableRuleAppend( service.actualChainName, jsonRule );
+    }
+
+
+}
+
+
+function nftTableRuleAppend( chainName, jsonRule ){
 
 // get rule
-    var htmlRules = document.getElementById( 'nftRules_' + chainName );
+    var htmlRules = document.getElementById( 'nftTableRules' );
 
 //
     var newRow = null;
@@ -247,43 +444,6 @@ function nftTableAppendRule( chainName, jsonRule ){
 }
 
 
-function nftChainClicked( button, chainName ){
-    var nftService = copilot.services["nft"];
-
-
-    if( nftService.htmlRuleHeaderSelected !== null ){
-        nftService.htmlRuleHeaderSelected.removeAttribute("class");
-
-        var nftRules = document.getElementById('nftRules_' + chainName);
-        nftRules.style.display = 'none';
-    }
-
-    nftService.htmlRuleHeaderSelected = button;
-    nftService.htmlRuleHeaderSelected.className = 'active';
-
-// show the table
-    var nftChainTable = document.getElementById('nftChainTable');
-    nftChainTable.style.display = '';
-
-
-// hide old rule
-    if( nftService.htmlRuleTableSelected !== null ){
-        nftService.htmlRuleTableSelected.style.display = 'none';
-    }
-// hide all other rules
-    document.getElementById('nftRules_prerouting').style.display = 'none';
-    document.getElementById('nftRules_input').style.display = 'none';
-    document.getElementById('nftRules_forward').style.display = 'none';
-    document.getElementById('nftRules_output').style.display = 'none';
-    document.getElementById('nftRules_postrouting').style.display = 'none';
-
-// show new rule
-    var nftRules = document.getElementById('nftRules_' + chainName);
-    nftRules.style.display = '';
-    nftService.htmlRuleTableSelected = nftRules;
-
-}
-
 
 
 // The rule-edit-dialog
@@ -295,16 +455,15 @@ function nftDialogRule( chainName, ruleIndex ){
 
 
 function nftDialogCustomRuleEdit( chainName, ruleIndex ){
+    var service = copilot.services["nft"];
 
 // vars
     var     jsonChain;
-    var     jsonRule = undefined;
+    var     jsonRule = null;
     var     htmlElement;
 
 // get the rule
-    jsonChain = nftRules[chainName];
-    if( jsonChain === undefined ) return;
-    if( ruleIndex >= 0 ) jsonRule = jsonChain[ruleIndex];
+    if( ruleIndex >= 0 ) jsonRule = service.actualRulesArray[ruleIndex];
 
 
 // set default values
@@ -317,7 +476,7 @@ function nftDialogCustomRuleEdit( chainName, ruleIndex ){
 
 
 // if rule exist, we edit it
-    if( jsonRule !== undefined ){
+    if( jsonRule !== null ){
 
         htmlElement = document.getElementById("customRuleDescription");
         htmlElement.value = jsonRule.descr;
@@ -345,171 +504,145 @@ function nftDialogCustomRuleEdit( chainName, ruleIndex ){
         htmlElement.innerHTML = "Neu";
         htmlElement.onclick = function(){
             chainName = document.getElementById("customRuleChain").innerHTML;
-            nftDialogCustomNew(chainName);
+            nftDialogCustomSave(chainName,-1);
         };
     }
-
 
 
     $("#customRuleDialog").modal('show');
 }
 
 
-function nftDialogCustomNew( chainName ){
-
-    var newJsonRule = {};
-    newJsonRule.active = "0";
-    newJsonRule.descr = document.getElementById("customRuleDescription").value;
-    newJsonRule.type = "custom";
-    newJsonRule.rule = document.getElementById("customRuleText").value;
-    newJsonRule.family = "ip6";
-
-    if( document.getElementById("customRuleIP4").checked == true ){
-        newJsonRule.family = "ip4";
-    }
-
-// append the rule to the chain
-    var jsonChainArray = nftRules[chainName];
-    jsonChainArray.push(newJsonRule);
-
-// refresh the table
-    nftTableAppendRules( nftRules );
-    $("#customRuleDialog").modal('hide');
-}
-
-
 function nftDialogCustomSave( chainName, ruleIndex ){
+    var service = copilot.services["nft"];
 
 // get the actual rule
-    var jsonChainArray = nftRules[chainName];
-    var newJsonRule = jsonChainArray[ruleIndex];
-    if( newJsonRule === undefined ) return;
+    var newJsonRule = service.actualRulesArray[ruleIndex];
+    if( newJsonRule === undefined ){
+        var newJsonRule = {};
+        service.actualRulesArray[service.actualRulesArray.length] = newJsonRule;
+    }
 
     newJsonRule.active = "0";
     newJsonRule.descr = document.getElementById("customRuleDescription").value;
     newJsonRule.type = "custom";
     newJsonRule.rule = document.getElementById("customRuleText").value;
-    newJsonRule.family = "ip6";
 
     if( document.getElementById("customRuleIP4").checked == true ){
         newJsonRule.family = "ip4";
+    } else {
+        newJsonRule.family = "ip6";
     }
 
 
-// refresh the table
-    nftTableAppendRules( nftRules );
+// hide the dialog
     $("#customRuleDialog").modal('hide');
+
+// send the changed array
+    nftTableChainSave( chainName, service.actualRulesArray );
+    nftChainsCountRequest();
+    nftTableChainRequest( chainName );
 }
 
 
 // Actions inside the table
 
-function nftRuleDelete( chainName, ruleIndex ){
-
-// remove
-    var htmlChain = document.getElementById( "nftRule_" + chainName + "_" + ruleIndex );
-    htmlChain.parentNode.removeChild(htmlChain);
-
-// decrement
-    var nftCounter = document.getElementById( 'nftRuleCount_' + chainName );
-    nftCounter.innerHTML = nftCounter.innerHTML - 1;
-
-// remove
-    nftRules[chainName].splice( ruleIndex, 1 );
-
-
-}
-
-
 function nftRuleDisable( chainName, ruleIndex ){
+    var service = copilot.services["nft"];
 
 // vars
-    var     jsonChain;
-    var     jsonRule = undefined;
-    var     htmlElement;
+    var     intRuleIndex = parseInt(ruleIndex);
+    var     jsonRuleActual = service.actualRulesArray[intRuleIndex+0];
 
-// get the rule
-    jsonChain = nftRules[chainName];
-    if( jsonChain === undefined ) return;
-    if( ruleIndex >= 0 ) jsonRule = jsonChain[ruleIndex];
-    if( jsonRule === undefined ) return;
+// we reach the end ?
+    if( jsonRuleActual !== null ){
+        jsonRuleActual.active = "0";
+    }
 
-    jsonRule.active = "0";
-    nftTableAppendRules( nftRules );
-
+// send the changed array
+    nftTableChainSave( chainName, service.actualRulesArray );
+    nftTableChainRequest( chainName );
 }
 
 
 function nftRuleEnable( chainName, ruleIndex ){
+    var service = copilot.services["nft"];
 
 // vars
-    var     jsonChain;
-    var     jsonRule = undefined;
-    var     htmlElement;
+    var     intRuleIndex = parseInt(ruleIndex);
+    var     jsonRuleActual = service.actualRulesArray[intRuleIndex+0];
 
-// get the rule
-    jsonChain = nftRules[chainName];
-    if( jsonChain === undefined ) return;
-    if( ruleIndex >= 0 ) jsonRule = jsonChain[ruleIndex];
-    if( jsonRule === undefined ) return;
+// we reach the end ?
+    if( jsonRuleActual !== null ){
+        jsonRuleActual.active = "1";
+    }
 
-    jsonRule.active = "1";
-    nftTableAppendRules( nftRules );
-
+// send the changed array
+    nftTableChainSave( chainName, service.actualRulesArray );
+    nftTableChainRequest( chainName );
 }
 
 
 function nftRuleMoveDown( chainName, ruleIndex ){
+    var service = copilot.services["nft"];
 
 // vars
-    var     jsonChain;
-    var     jsonRule = undefined;
-    var     jsonRuleNext = undefined;
     var     intRuleIndex = parseInt(ruleIndex);
-    var     htmlElement;
 
-// get the rule
-    jsonChain = nftRules[chainName];
-    if( jsonChain === undefined ) return;
-    if( intRuleIndex >= 0 ) jsonRule = jsonChain[intRuleIndex];
-    if( jsonRule === undefined ) return;
 
-    jsonRuleNext = jsonChain[intRuleIndex+1];
-    if( jsonRuleNext !== undefined ){
+// get old rule / get actual rule
+    jsonRuleActual = service.actualRulesArray[intRuleIndex+0];
+    jsonRuleNext = service.actualRulesArray[intRuleIndex+1];
 
-        jsonChain[intRuleIndex] = jsonRuleNext;
-        jsonChain[intRuleIndex+1] = jsonRule;
+// we reach the end ?
+    if( jsonRuleNext !== null && jsonRuleActual !== null ){
+        service.actualRulesArray[intRuleIndex+1] = jsonRuleActual;
+        service.actualRulesArray[intRuleIndex+0] = jsonRuleNext;
     }
 
-// refresh list
-    nftTableAppendRules( nftRules );
+// send the changed array
+    nftTableChainSave( chainName, service.actualRulesArray );
+    nftTableChainRequest( chainName );
 }
 
 
 function nftRuleMoveUp( chainName, ruleIndex ){
+    var service = copilot.services["nft"];
 
 // vars
-    var     jsonChain;
-    var     jsonRule = undefined;
-    var     jsonRulePrev = undefined;
     var     intRuleIndex = parseInt(ruleIndex);
-    var     htmlElement;
 
-// get the rule
-    jsonChain = nftRules[chainName];
-    if( jsonChain === undefined ) return;
-    if( intRuleIndex >= 0 ) jsonRule = jsonChain[intRuleIndex];
-    if( jsonRule === undefined ) return;
 
-    jsonRulePrev = jsonChain[intRuleIndex-1];
-    if( jsonRulePrev !== undefined ){
+// get old rule / get actual rule
+    jsonRuleActual = service.actualRulesArray[intRuleIndex+0];
+    jsonRuleLast = service.actualRulesArray[intRuleIndex-1];
 
-        jsonChain[intRuleIndex] = jsonRulePrev;
-        jsonChain[intRuleIndex-1] = jsonRule;
+// we reach the end ?
+    if( jsonRuleLast !== null && jsonRuleActual !== null ){
+        service.actualRulesArray[intRuleIndex-1] = jsonRuleActual;
+        service.actualRulesArray[intRuleIndex+0] = jsonRuleLast;
     }
 
-// refresh list
-    nftTableAppendRules( nftRules );
+// send the changed array
+    nftTableChainSave( chainName, service.actualRulesArray );
+    nftTableChainRequest( chainName );
+}
+
+
+function nftRuleDelete( chainName, ruleIndex ){
+    var service = copilot.services["nft"];
+
+// vars
+    var     intRuleIndex = parseInt(ruleIndex);
+    var     jsonRuleActual = service.actualRulesArray[intRuleIndex];
+
+// remove
+    service.actualRulesArray.splice( ruleIndex, 1 );
+
+// send the changed array
+    nftTableChainSave( chainName, service.actualRulesArray );
+    nftChainsCountRequest();
+    nftTableChainRequest( chainName );
 }
 
 
@@ -521,7 +654,7 @@ function nftRulesSave(){
         return;
     }
 
-    wsSendMessage( null, service.selectedHostName, service.listenGroup, "save", JSON.stringify(nftRules) );
+    wsSendMessage( null, service.selectedHostName, service.listenGroup, "save", "" );
 
 }
 
@@ -533,6 +666,42 @@ function nftRulesApply(){
     }
 
     wsSendMessage( null, service.selectedHostName, service.listenGroup, "apply", "" );
+}
+
+
+
+// ######################################################## Commands ########################################################
+
+function nftChainsCountRequest(){
+    var service = copilot.services["nft"];
+
+// remove the rules
+    service.chainsCount = {};
+
+// we want to get the rules
+    wsSendMessage( null, copilot.selectedHostName, service.listenGroup, "chainsCountGet", copilot.selectedHostName );
+
+}
+
+
+function nftTableChainRequest( chainName ){
+    var service = copilot.services["nft"];
+
+    wsSendMessage( null, copilot.selectedHostName, service.listenGroup, "chainGet", chainName );
+}
+
+
+function nftTableChainSave( chainName, jsonRulesArray ){
+
+// vars
+    var service = copilot.services["nft"];
+    var jsonChainObject = {};
+
+// create object
+    jsonChainObject[chainName] = jsonRulesArray;
+
+
+    wsSendMessage( null, service.selectedHostName, service.listenGroup, "chainSave", JSON.stringify(jsonChainObject) );
 }
 
 

@@ -73,57 +73,13 @@
 <!--
     <ul id="nftHostTabBar" class="nav nav-tabs"></ul>
 -->
+<!-- ##################################### Tabs ##################################### -->
+    <ul id="nftChainTabBar" class="nav nav-tabs" style="display:none;"></ul>
 
-    <ul id="nftChainTabBar" class="nav nav-tabs" style="display:none;">
+    <button id="nftRuleAppendButton" type='button' class='btn btn-primary' onclick="nftRulesApply()">Hinzufügen</button>
 
-        <li onclick="nftChainClicked(this,'prerouting')" >
-            <a href="#">prerouting
-                <span id="nftRuleCount_prerouting" class="badge">0</span>
-                <button type="button" class="btn btn-success" onclick="nftDialogRule('prerouting',-1)">
-                    <span class="glyphicon glyphicon-plus"></span>
-                </button>
-            </a>
-        </li>
-
-        <li onclick="nftChainClicked(this,'input')">
-            <a href="#" >input
-                <span id="nftRuleCount_input" class="badge">0</span>
-                <button type="button" class="btn btn-success" onclick="nftDialogRule('input',-1)">
-                    <span class="glyphicon glyphicon-plus"></span>
-                </button>
-            </a>
-        </li>
-
-        <li onclick="nftChainClicked(this,'forward')">
-            <a href="#">forward
-                <span id="nftRuleCount_forward" class="badge">0</span>
-                <button type="button" class="btn btn-success" onclick="nftDialogRule('forward',-1)">
-                    <span class="glyphicon glyphicon-plus"></span>
-                </button>
-            </a>
-        </li>
-
-        <li onclick="nftChainClicked(this,'output')">
-            <a href="#">output
-                <span id="nftRuleCount_output" class="badge">0</span>
-                <button type="button" class="btn btn-success" onclick="nftDialogRule('output',-1)">
-                    <span class="glyphicon glyphicon-plus"></span>
-                </button>
-            </a>
-        </li>
-
-        <li onclick="nftChainClicked(this,'postrouting')">
-            <a href="#" >postrouting
-                <span id="nftRuleCount_postrouting" class="badge">0</span>
-                <button type="button" class="btn btn-success" onclick="nftDialogRule('postrouting',-1)">
-                    <span class="glyphicon glyphicon-plus"></span>
-                </button>
-            </a>
-        </li>
-
-    </ul>
-
-    <table id="nftChainTable" class="table table-striped" style="display:none;">
+<!-- ##################################### Tables ##################################### -->
+    <table id="nftChainTable" class="table table-striped" >
 
         <thead>
             <tr>
@@ -134,12 +90,7 @@
             </tr>
         </thead>
 
-
-        <tbody id="nftRules_prerouting"></tbody>
-        <tbody id="nftRules_input" style="display:none"></tbody>
-        <tbody id="nftRules_forward" style="display:none"></tbody>
-        <tbody id="nftRules_output" style="display:none"></tbody>
-        <tbody id="nftRules_postrouting" style="display:none"></tbody>
+        <tbody id="nftTableRules" ></tbody>
 
 
     </table>

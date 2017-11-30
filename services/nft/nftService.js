@@ -55,8 +55,8 @@ function nftLoadPage(){
 // load
     htmlLoadFile( "output", "services/nft/nft.html", function(){
         jsLoadFile( "services/nft/nft.js", function(){
-            nftRequestChains();
-            copilot.onHostSelected = nftRequestChains;
+            nftChainsCountRequest();
+            copilot.onHostSelected = nftChainsCountRequest;
         });
 
 	});

@@ -5,14 +5,13 @@ copliotdService.id = "copliotd";
 copliotdService.displayName = "Copliot";
 copliotdService.listenGroup = "";
 copliotdService.onAuth = copliotdOnAuth;
-copliotdService.onConnect = null;
+copliotdService.onConnect = copliotdConnect;
 copliotdService.onDisconnect = null;
 copliotdService.onMessage = null;
 copliotdService.onHostSelected = null;
 copliotdService.onSimulation = copilotdSimulation;
 
 // local
-
 
 function copliotdOnAuth(){
 
@@ -68,6 +67,11 @@ function copilotdShow(){
     }
 
 	return;
+}
+
+
+function copliotdConnect(){
+    copilotGetHostName();
 }
 
 
@@ -587,4 +591,3 @@ function acceptedKeyRemove( fingerprint ){
 
 
 wsServiceRegister( copliotdService );
-copilotGetHostName();
