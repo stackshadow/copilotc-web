@@ -74,10 +74,16 @@ function            jsLoadFile( fileName, finishLoadingFunction = null ){
 function            htmlLoadFile( id, fileName, finishLoadingFunction = null ){
 // container
 
-    htmlContainer = document.createElement('div');
-    htmlContainer.id = id;
-//    htmlContainer.innerHTML='<object type="text/html" data="' + fileName + '" ></object>';
-    document.body.appendChild( htmlContainer );
+// check if container already exist
+    htmlContainer = document.getElementById( id );
+    if( htmlContainer === null || htmlContainer === undefined ){
+        htmlContainer = document.createElement('div');
+        htmlContainer.id = id;
+    //    htmlContainer.innerHTML='<object type="text/html" data="' + fileName + '" ></object>';
+        document.body.appendChild( htmlContainer );
+    }
+
+
 
 
 
@@ -549,11 +555,12 @@ copilot.onMessage = function( topicHostName, topicGroup, topicCommand, payload )
 		copliotNodeSelect( copilot.myhostname );
     }
 
-// if we get a pong ( an ping answer ) than we just remember the hostname
+// we just remember the hostname
 // other plugins maybe do something with the copilot.hostnames-object
-    if( topicGroup == "co" && topicCommand == "pong" ){
+    if( topicHostName != "" ){
         copilot.hostnames[topicHostName] = "";
     }
+
 
 // this command just remember the hostname for later use
 	if( topicGroup == "co" && topicCommand == "nodes" ){
