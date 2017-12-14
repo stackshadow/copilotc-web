@@ -50,30 +50,25 @@ function sysOnAuth(){
 function sysLoadPage(){
 // load
     htmlLoadFile( "output", "services/sysstate/sysstate.html", function(){
-        jsLoadFile( "services/sysstate/sysstate.js", function(){
-            sysStateNodeAdd( "webserver" );
-            sysStateNodeAdd( "dbserver1" );
-            sysStateNodeAdd( "dbserver2" );
-            sysStateNodeAdd( "dbserver3" );
-            sysStateNodeAdd( "wiki" );
-            sysStateNodeAdd( "puppetserver" );
-            sysStateNodeAdd( "datacenter1" );
-            sysStateNodeAdd( "datacenter2" );
-            sysStateNodeAdd( "datacenter3" );
-
-            sysStateNodeHealthSet("webserver",100);
-            sysStateNodeHealthSet("dbserver1",80);
-            sysStateNodeHealthSet("dbserver2",55);
-            sysStateNodeHealthSet("dbserver3",100);
-            sysStateNodeHealthSet("wiki",90);
-            sysStateNodeHealthSet("puppetserver",95);
-            sysStateNodeHealthSet("datacenter1",100);
-            sysStateNodeHealthSet("datacenter2",40);
-            sysStateNodeHealthSet("datacenter3",20);
+        htmlLoadFile( "sysStateCmdList", "services/sysstate/sysStateCmdList.html", function(){
+            htmlLoadFile( "sysStateCmdNew", "services/sysstate/sysStateNewCmd.html", function(){
+                jsLoadFile( "services/sysstate/sysstate.js", function(){
 
 
+
+                    for( hostName in copilot.hostnames ){
+                        displayName = hostName;
+
+                        sysStateNodeAdd( hostName, hostName );
+                        sysStateNodeHealthSet( hostName, 0.0 );
+                        sysStateHealthRequest( hostName );
+                        sysStateRunningRequest( hostName );
+
+                    }
+
+                });
+            });
         });
-
 	});
 
 

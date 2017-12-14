@@ -1,49 +1,10 @@
 
-    <div class="container">
-        <form>
 
-            <div class="form-group row">
-                <label class="col-sm-1 col-form-label" for="sysstateCmd">Command:</label>
-                <input class="col-sm-11" id="sysstateCmd" type="text" class="form-control" placeholder=""
-                    value="free -t -m | tail -n1 | awk -F' ' '{print $4}'">
-                </input>
-            </div>
+    <div id='sysStateCmdList' class="container" style="display:none;" ></div>
 
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label" for="sysstateMin">Min value ( the worst value, when healt gets 0%, realy bad )</label>
-                <input class="col-sm-2" id="sysstateMin" type="text" class="form-control" placeholder="0" value="0"></input>
+    <div id='sysStateCmdNew' class="container" style="display:none;"></div>
 
-                <label class="col-sm-4 col-form-label" for="sysstateMax">Max value ( The best value, when healt is 100%, good )</label>
-                <input class="col-sm-2" id="sysstateMax" type="text" class="form-control" placeholder="100" value="100"></input>
-            </div>
-
-            <div class="form-group row">
-                <label class="col-sm-1 col-form-label" for="sysstateCmdOutput">Output</label>
-                <input class="col-sm-5" id="sysstateCmdOutput" type="text" class="form-control" disabled></input>
-
-
-
-                <label class="col-sm-1 col-form-label" for="sysstateCmdHealth">Health</label>
-                <div class="progress">
-                    <div id="sysstateCmdHealth" class="progress-bar" role="progressbar" style="width: 80%;"
-                    aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" >
-                        <span>50%</span>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="form-group row">
-                <div class="col-sm-1">
-                    <button type="button" class="btn btn-primary" onclick="sysstateTest()">Testen</button>
-                </div>
-            </div>
-
-        </form>
+    <div id='sysStateDashboard' class="container-fluid container-cards-pf">
+        <div id="sysStateCardContainer" class="row row-cards-pf"></div>
     </div>
 
-    <div class="container-fluid container-cards-pf">
-        <div id="sysStateCardContainer" class="row row-cards-pf">
-
-        </div><!-- /row -->
-    </div><!-- /container -->
