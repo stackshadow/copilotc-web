@@ -34,6 +34,8 @@ copilot.simulation = false;
 // events
 copilot.onHostSelected = null;
 
+// test
+
 
 /**
 @brief Load java-script file and init
@@ -150,80 +152,80 @@ function            messageHide(){
 }
 function            messageInfo( message, timeout = 0 ){
 
-/*
+    if( timeout == 0 ) timeout = 4;
+
 // container
-    var htmlContainer =  document.getElementById( "message" );
-    //htmlContainer.className = "alert alert-info";
-    htmlContainer.className = "toast-pf toast-pf-max-width toast-pf-top-right alert alert-success alert-dismissable"
+    var htmlMsgContainer =  document.getElementById( "messageContainer" );
 
-// icon
-    var htmlIcon =  document.getElementById( "messageIcon" );
-    //htmlIcon.className = "glyphicon glyphicon-ok";
-    htmlIcon.className = "pficon pficon-ok";
+    var htmlMsg = document.createElement('div');
+    htmlMsg.className = "toast-pf toast-pf-top-left alert alert-success";
+    htmlMsg.id = genUUID();
+    htmlMsg.innerHTML = " \
+        <span class=\"pficon pficon-info\"></span> \
+    " + message;
 
-// message
-    var htmlMessage =  document.getElementById( "messageText" );
-    htmlMessage.innerHTML = " " + message;
+// add it
+    htmlMsgContainer.appendChild( htmlMsg );
 
-// show and hide after a time
-    htmlContainer.style.display = '';
 
-    if( timeout > 0 ){
-        setTimeout( messageHide, timeout * 1000 );
-    }
-*/
-var notify = $.notify({
-	icon: 'glyphicon glyphicon-ok',
-    title: 'Info:',
-    message: message
-},{
-    type: 'info',
-    placement: {
-        from: "bottom",
-        align: "right"
-    },
-    delay: 3000,
-});
+// set timeout
+    window.setTimeout(function() {
+        $("#" + htmlMsg.id).fadeTo(500, 0).slideUp(500, function(){
+            $(this).remove();
+        });
+    }, timeout * 1000 );
+
+
+}
+function            messageSuccess( message, timeout = 0 ){
+
+    if( timeout == 0 ) timeout = 4;
+
+// container
+    var htmlMsgContainer =  document.getElementById( "messageContainer" );
+
+    var htmlMsg = document.createElement('div');
+    htmlMsg.className = "toast-pf toast-pf-top-left alert alert-success";
+    htmlMsg.id = genUUID();
+    htmlMsg.innerHTML = " \
+        <span class=\"pficon pficon-ok\"></span> \
+    " + message;
+
+// add it
+    htmlMsgContainer.appendChild( htmlMsg );
+
+// set timeout
+    window.setTimeout(function() {
+        $("#" + htmlMsg.id).fadeTo(500, 0).slideUp(500, function(){
+            $(this).remove();
+        });
+    }, timeout * 1000 );
 
 
 }
 function            messageAlert( message, timeout = 0 ){
 
-/*
+    if( timeout == 0 ) timeout = 4;
+
 // container
-    var htmlContainer =  document.getElementById( "message" );
-    //htmlContainer.className = "alert alert-danger";
-    htmlContainer.className = "toast-pf toast-pf-max-width toast-pf-top-right alert alert-danger alert-dismissable"
+    var htmlMsgContainer =  document.getElementById( "messageContainer" );
 
+    var htmlMsg = document.createElement('div');
+    htmlMsg.className = "toast-pf toast-pf-top-left alert alert-danger";
+    htmlMsg.id = genUUID();
+    htmlMsg.innerHTML = " \
+        <span class=\"pficon pficon-close\"></span> \
+    " + message;
 
-// icon
-    var htmlIcon =  document.getElementById( "messageIcon" );
-    //htmlIcon.className = "glyphicon glyphicon-exclamation-sign";
-    htmlIcon.className = "pficon pficon-error-circle-o";
+// add it
+    htmlMsgContainer.appendChild( htmlMsg );
 
-// message
-    var htmlMessage =  document.getElementById( "messageText" );
-    htmlMessage.innerHTML = " " + message;
-
-// show and hide after a time
-    htmlContainer.style.display = '';
-
-    if( timeout > 0 ){
-        setTimeout( messageHide, timeout * 1000 );
-    }
-*/
-var notify = $.notify({
-	icon: 'glyphicon glyphicon-ok',
-    title: 'Error:',
-    message: message
-},{
-    type: 'alert',
-    placement: {
-        from: "bottom",
-        align: "right"
-    },
-    delay: 3000,
-});
+// set timeout
+    window.setTimeout(function() {
+        $("#" + htmlMsg.id).fadeTo(500, 0).slideUp(500, function(){
+            $(this).remove();
+        });
+    }, timeout * 1000 );
 
 }
 function            messageLog( section, message ){
@@ -540,6 +542,11 @@ copilot.onMessage = function( topicHostName, topicGroup, topicCommand, payload )
         var message = payload;
         if( message === undefined ) return;
         messageInfo( message, 10 );
+    }
+    if( topicCommand == "msgSuccess" ){
+        var message = payload;
+        if( message === undefined ) return;
+        messageSuccess( message, 10 );
     }
     if( topicCommand == "msgError" ){
         var message = payload;
