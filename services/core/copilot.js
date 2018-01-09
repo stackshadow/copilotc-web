@@ -29,6 +29,7 @@ copilot.hostnames = {};
 copilot.services = [];
 copilot.myhostname = "localhost";
 copilot.selectedHostName = null;
+copilot.selectedService = null;
 copilot.simulation = false;
 
 // events
@@ -272,6 +273,20 @@ function            navAppend( htmlElement ){
     htmlNavElement.appendChild( htmlElement );
 
     htmlNav.appendChild( htmlNavElement );
+}
+function            navAppend2( service, glyphicon, displayText ){
+
+
+    htmlNavButton = document.createElement('a');
+    htmlNavButton.id = service.id + "Button";
+    htmlNavButton.innerHTML = "<span class=\"glyphicon glyphicon-"+glyphicon+"\"></span> " + displayText;
+    htmlNavButton.onclick = function(){ copilotSelectService( service.id ); };
+    htmlNavButton.style.display = 'none';
+    navAppend( htmlNavButton );
+
+
+    wsServiceRegister( service );
+
 }
 function            settingAppend( htmlElement ){
     var settingsDropDown =  document.getElementById( "settingsDropDown" );
@@ -605,6 +620,31 @@ copilot.onMessage = function( topicHostName, topicGroup, topicCommand, payload )
 }
 
 
+function            copilotSelectService( serviceName ){
+
+// get service
+    var service = copilot.services[serviceName];
+    if( service === null || service === undefined ){
+        return;
+    }
+
+// deselect old
+    if( copilot.selectedService !== null ){
+        if( copilot.selectedService.onDeSelect !== null ){
+            copilot.selectedService.onDeSelect();
+        }
+    }
+
+// select
+    if( service.onSelect === undefined ){
+        messageLog( "copilot", "onSelect function is missing" );
+        return;
+    }
+    service.onSelect();
+
+// remember selected service
+    copilot.selectedService = service;
+}
 function            copilotGetHostName(){
 	wsSendMessage( "pingid", "all", "co", "hostNameGet", "" );
 }
