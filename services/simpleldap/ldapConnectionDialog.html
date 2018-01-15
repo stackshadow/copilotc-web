@@ -1,38 +1,70 @@
 
-<!-- Modal -->
-<div id="ldapConnectDialog" class="modal fade" role="dialog">
+<form style="display=none;">
 
-	<div class="modal-dialog">
+    <div class="form-group row">
+        <label class="col-form-label" for="ldapConfigURI">URI:</label>
+        <input id="ldapConfigURI" type="text" class="form-control" placeholder="ldap://localhost/"
+            value="">
+        </input>
+    </div>
 
-		<!-- Modal content-->
-		<div class="modal-content">
+    <div class="form-group row">
+        <label class="col-form-label" for="ldapConfigAdminDN">Admin DN:</label>
+        <input id="ldapConfigAdminDN" type="text" class="form-control" placeholder="cn=admin,cn=config"
+            value="">
+        </input>
+    </div>
 
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">LDAP Verbindung</h4>
-			</div>
+    <div class="form-group row">
+        <label class="col-form-label" for="ldapConfigAdminPW">Admin Password:</label>
+        <input id="ldapConfigAdminPW" type="password" class="form-control" placeholder="secret"
+            value="">
+        </input>
+    </div>
 
-			<div class="modal-body">
+    <div class="form-group row">
+        <label class="col-form-label" for="ldapConfigUserDN">User DN:</label>
+        <input id="ldapConfigUserDN" type="text" class="form-control" placeholder="cn=admin,dc=evilbrain,dc=de"
+            value="">
+        </input>
+    </div>
 
-                <div class="form-group">
-                    <label for="ldapUserName">Benutzername:</label>
-                    <input id="ldapUserName" type="text" class="form-control" >
-                </div>
+    <div class="form-group row">
+        <label class="col-form-label" for="ldapConfigUserPW">User Password:</label>
+        <input id="ldapConfigUserPW" type="password" class="form-control" placeholder="secret"
+            value="">
+        </input>
+    </div>
 
-                <div class="form-group">
-                    <label for="ldapPassword">Passwort:</label>
-                    <input id="ldapPassword" type="password" class="form-control" >
-                </div>
+    <div class="form-group row">
+        <label class="col-form-label" for="ldapBaseDN">Base DN:</label>
+        <input id="ldapBaseDN" type="text" class="form-control" placeholder="dc=evilbrain,dc=de"
+            value="">
+        </input>
+    </div>
 
-			</div>
+    <div class="form-group row">
+        <label class="col-form-label" for="ldapGroupDN">Group DN:</label>
+        <input id="ldapGroupDN" type="text" class="form-control" placeholder="ou=groups"
+            value="">
+        </input>
+    </div>
 
-			<div class="modal-footer">
-                <button type="button" class="btn btn-success" onclick="ldapConnectionEditSave();">Speichern</button>
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-			</div>
+    <div class="form-group row">
+        <label class="col-form-label" for="ldapUserDN">User DN:</label>
+        <input id="ldapUserDN" type="text" class="form-control" placeholder="ou=accounts"
+            value="">
+        </input>
+    </div>
 
-		</div>
+    <div class="form-group row">
+        <div class="btn-group">
+            <button type="button" class="btn btn-success" onclick="ldapConnectionEditorSave();">
+            <span class="glyphicon glyphicon-log-in"></span> Speichern</button>
 
-	</div>
+            <button type="button" class="btn btn-warning" onclick="ldapConnectionEditorHide();">
+            <span class="glyphicon glyphicons-edit"></span> Abbrechen</button>
+        </div>
+    </div>
 
-</div>
+</form>
