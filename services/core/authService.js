@@ -23,31 +23,44 @@ coreService.id = "auth";
 coreService.displayName = "Login-Service";
 coreService.listenGroup = "co";
 coreService.onAuth = authOnAuth;
-coreService.onConnect = authOnConnect;
-coreService.onDisconnect = authOnDisconnect;
-coreService.onMessage = authOnMessage;
+coreService.onSelect = authOnSelect;
+coreService.onDeSelect = null;
+coreService.onConnect = null;
+coreService.onDisconnect = null;
+coreService.onMessage = null;
 coreService.onHostSelected = null;
-coreService.onSimulation = authSimulation;
-
-// Navigation bar
-htmlConnState = document.createElement('a');
-htmlConnState.id = "btnAuthConnect";
-htmlConnState.innerHTML = "<span class=\"glyphicon glyphicon-log-in\"></span> Login";
-htmlConnState.onclick = function(){ authRequest(); }
-navAppend( htmlConnState );
-
-htmlLoadFile( "output", "services/core/authDialog.html" );
+coreService.onSimulation = authOnMessageSimulation;
 
 
 
-function authOnConnect(){
+
+navAppend( coreService, "log-in", " Login", true );
 
 
+function authOnSelect(){
+    var service = copilot.services["auth"];
+
+    htmlLoadFile( "output", "services/core/authDialog.html", function(){
+
+        service.onDeSelect = authOnDeSelect;
+        coreService.onMessage = authOnMessage;
+
+        wsSendMessage( null, null, "co", "authMethodeGet", "" );
+    });
 
 }
-function authOnDisconnect(){
+
+
+function authOnDeSelect(){
+    var service = copilot.services["auth"];
+
+    service.onDeSelect = null;
+    service.onMessage = null;
 
 }
+
+
+
 function authOnMessage( topicHostName, topicGroup, topicCommand, payload ){
 
 // auth methode
@@ -64,21 +77,7 @@ function authOnMessage( topicHostName, topicGroup, topicCommand, payload ){
     if( topicCommand == "loginok" ) authDialogLoginOk();
 
 }
-function authOnAuth( service ){
-
-// hide the dialog
-    $("#loginDialog").modal('hide');
-
-// change the Login-Button to Logout
-    var htmlBtnConnect =  document.getElementById( "btnAuthConnect" );
-    htmlConnState.innerHTML = "<span class=\"glyphicon glyphicon-log-out\"></span> Logout";
-    htmlConnState.onclick = function(){ authDialogLogout(); }
-
-// send ping to connected services ( to get a list of connected hosts )
-    copilotPing();
-
-}
-function authSimulation( topicHostName, topicGroup, topicCommand, payload ){
+function authOnMessageSimulation( topicHostName, topicGroup, topicCommand, payload ){
 
     if( topicCommand == "authMethodeGet" ){
         copilot.onMessage("simulation","co","authMethode","none");
@@ -87,13 +86,23 @@ function authSimulation( topicHostName, topicGroup, topicCommand, payload ){
 
 
 }
+function authOnAuth( service ){
+    var service = copilot.services["auth"];
 
+// hide the dialog
+    $("#loginDialog").modal('hide');
 
+// change the Login-Button to Logout
+    var htmlBtnConnect =  document.getElementById( service.id + "Button" );
+    htmlBtnConnect.innerHTML = "<span class=\"glyphicon glyphicon-log-out\"></span> Logout";
+    htmlBtnConnect.onclick = function(){ authDialogLogout(); }
 
+// send ping to connected services ( to get a list of connected hosts )
+    copilotPing();
 
-function authRequest(){
-    wsSendMessage( null, null, "co", "authMethodeGet", "" );
 }
+
+
 
 
 
@@ -130,6 +139,12 @@ function authDialogLoginOk(){
             service.onAuth( service );
         }
 
+    // enable the button
+        var htmlNavButton = document.getElementById( service.id + "Button" );
+        if( htmlNavButton !== null && htmlNavButton !== undefined ){
+            htmlNavButton.style.display = '';
+        }
+
     }
 
 
@@ -138,11 +153,6 @@ function authDialogLoginOk(){
 function authDialogLogout(){
     wsDisconnect();
 }
-
-
-
-
-wsServiceRegister( coreService );
 
 
 

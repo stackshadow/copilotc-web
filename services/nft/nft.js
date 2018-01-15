@@ -1,7 +1,6 @@
 
 // setup service
 var service = copilot.services["nft"];
-service.onMessage = nftOnMessage;
 
 // private vars
 service.htmlRuleTableSelected = null;

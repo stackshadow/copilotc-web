@@ -2,8 +2,9 @@ var service = copilot.services["syslogd"];
 
 
 
-service.onMessage = function( topicHostName, topicGroup, topicCommand, payload ){
 
+
+function syslogdOnMessage( topicHostName, topicGroup, topicCommand, payload ){
 
 	if( topicCommand == "entry" ){
 		// payload is a json-object
@@ -20,9 +21,7 @@ service.onMessage = function( topicHostName, topicGroup, topicCommand, payload )
 
         return;
     }
-
 }
-
 
 
 function syslogdRequestState(){

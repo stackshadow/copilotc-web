@@ -32,7 +32,7 @@ newService.onHostSelected = null;
 newService.onSimulation = null;
 
 
-navAppend2( newService, "user", " LDAP Users" );
+navAppend( newService, "user", " LDAP Users" );
 
 
 
@@ -56,10 +56,10 @@ function ldapLoadPage(){
 
 function ldapUnLoadPage(){
 
-    var htmlObject = document.getElementById( "simpleldapConnectionDialog" );
+    var htmlObject = document.getElementById( "ldapConnectionEditor" );
     htmlObject.innerHTML = "";
 
-    var htmlObject = document.getElementById( "ldapList" );
+    var htmlObject = document.getElementById( "ldapLists" );
     htmlObject.innerHTML = "";
 
     var htmlObject = document.getElementById( "js_services/simpleldap/simpleldap.js" );

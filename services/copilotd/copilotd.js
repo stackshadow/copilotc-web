@@ -1,79 +1,7 @@
 
-// service
-var copliotdService = {};
-copliotdService.id = "copliotd";
-copliotdService.displayName = "Copliot";
-copliotdService.listenGroup = "";
-copliotdService.onAuth = copliotdOnAuth;
-copliotdService.onConnect = copliotdConnect;
-copliotdService.onDisconnect = null;
-copliotdService.onMessage = null;
-copliotdService.onHostSelected = null;
-copliotdService.onSimulation = copilotdSimulation;
+
 
 // local
-
-function copliotdOnAuth(){
-
-    htmlNavElement = document.getElementById( "copliotdBtnMenu" );
-
-    if( htmlNavElement === null || htmlNavElement === undefined ){
-        // Navigation bar
-        htmlNavElement = document.createElement('a');
-        htmlNavElement.id = "copliotdBtnMenu";
-        htmlNavElement.innerHTML = "<span class=\"glyphicon glyphicon-fire\"></span> Copliot";
-        htmlNavElement.onclick = function(){ copilotdShow(); }
-        navAppend( htmlNavElement );
-    }
-
-	return;
-}
-
-
-function copilotdShow(){
-    var service = copilot.services["copliotd"];
-
-
-
-    htmlCopilotd = document.getElementById( "copilotd" );
-    if( htmlCopilotd === null || htmlCopilotd === undefined ){
-    // load
-        htmlLoadFile( "output", "services/copilotd/copilotd.html", function(){
-            //jsLoadFile( "js/services/nft.js" );
-
-
-			//copilotdHostTableLoad();
-
-		// call command to get known hosts from copilotd
-            copilotdHostTableRefresh();
-
-        // get server info
-            wsSendMessage( null, null, "cocom", "serverConfigGet", "" );
-
-        // get the list with not authorized keys
-            unacceptedKeysRefresh();
-            acceptedKeysRefresh();
-
-		// request infos about mqtt-server
-		//	wsSendMessage( null, null, "mqtt", "getinfos", "" );
-
-
-
-
-		// set message
-			service.onMessage = copilotdOnMessage;
-
-        });
-    }
-
-	return;
-}
-
-
-function copliotdConnect(){
-    copilotGetHostName();
-}
-
 
 function copilotdOnMessage( topicHostName, topicGroup, topicCommand, payload ){
 
@@ -207,10 +135,10 @@ function copilotdPing(){
 	copilotdHostTableSetAllInactive();
 
 // reset
-    copliotdService.nodesActive = 0;
-    copliotdService.nodesInActive = 0;
+    service.nodesActive = 0;
+    service.nodesInActive = 0;
     for( hostName in copilot.hostnames ){
-        copliotdService.nodesInActive++;
+        service.nodesInActive++;
     }
 
 // ping
@@ -586,8 +514,3 @@ function acceptedKeyRemove( fingerprint ){
 }
 
 
-
-
-
-
-wsServiceRegister( copliotdService );

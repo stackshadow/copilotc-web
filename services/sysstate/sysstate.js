@@ -1,7 +1,6 @@
 
 var service = copilot.services["sysstate"];
 service.charts = [];
-service.onMessage = sysStateOnMessage;
 
 
 

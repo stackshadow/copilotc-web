@@ -22,7 +22,9 @@ var newService = {};
 newService.id = "nft";
 newService.displayName = "NetFilter-Service";
 newService.listenGroup = "nft";
-newService.onAuth = nftOnAuth;
+newService.onAuth = null;
+newService.onSelect = nftOnSelect;
+newService.onDeSelect = null;
 newService.onConnect = null;
 newService.onDisconnect = null;
 newService.onMessage = null;
@@ -30,42 +32,37 @@ newService.onHostSelected = null;
 newService.onSimulation = null;
 
 
-function nftOnAuth(){
 
-    htmlNavElement = document.getElementById( "nftButtonShow" );
-
-    if( htmlNavElement === null || htmlNavElement === undefined ){
-        // Navigation bar
-        htmlNavElement = document.createElement('a');
-        htmlNavElement.id = "nftButtonShow";
-        htmlNavElement.innerHTML = "<span class=\"glyphicon glyphicon-fire\"></span> Netfilter";
-        htmlNavElement.onclick = function(){ nftLoadPage(); }
-        navAppend( htmlNavElement );
-    }
+navAppend( newService, "fire", " Netfilter" );
 
 
-    htmlNavElement = document.getElementById( "nftButtonSettings" );
+function nftOnSelect(){
+    var service = copilot.services["nft"];
 
-//settingAppend
-
-}
-
-
-function nftLoadPage(){
 // load
     htmlLoadFile( "output", "services/nft/nft.html", function(){
         jsLoadFile( "services/nft/nft.js", function(){
+
+        // setup service
+            service.onDeSelect = nftOnDeSelect;
+            service.onMessage = nftOnMessage;
+
             nftChainsCountRequest();
             copilot.onHostSelected = nftChainsCountRequest;
         });
-
 	});
 
+}
 
+
+function nftOnDeSelect(){
+    var service = copilot.services["nft"];
+
+    service.onDeSelect = null;
+    service.onMessage = null;
 
 }
 
 
 
-wsServiceRegister( newService );
 newService = null;

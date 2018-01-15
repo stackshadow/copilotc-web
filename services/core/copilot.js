@@ -266,23 +266,23 @@ function            connStateDisConnected(){
 
 
 // the links
-function            navAppend( htmlElement ){
-    var htmlNav =  document.getElementById( "navigationLeft" );
-
-    var htmlNavElement = document.createElement('li');
-    htmlNavElement.appendChild( htmlElement );
-
-    htmlNav.appendChild( htmlNavElement );
-}
-function            navAppend2( service, glyphicon, displayText ){
+function            navAppend( service, glyphicon, displayText, showAlways = false ){
 
 
     htmlNavButton = document.createElement('a');
     htmlNavButton.id = service.id + "Button";
     htmlNavButton.innerHTML = "<span class=\"glyphicon glyphicon-"+glyphicon+"\"></span> " + displayText;
     htmlNavButton.onclick = function(){ copilotSelectService( service.id ); };
-    htmlNavButton.style.display = 'none';
-    navAppend( htmlNavButton );
+    if( showAlways == false ){
+        htmlNavButton.style.display = 'none';
+    }
+
+    var htmlNav =  document.getElementById( "navigationLeft" );
+
+    var htmlNavElement = document.createElement('li');
+    htmlNavElement.appendChild( htmlNavButton );
+
+    htmlNav.appendChild( htmlNavElement );
 
 
     wsServiceRegister( service );

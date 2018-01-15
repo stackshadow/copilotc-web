@@ -23,6 +23,7 @@ newService.id = "syslogd";
 newService.displayName = "Systemd Logging";
 newService.listenGroup = "syslogd";
 newService.onAuth = null;
+newService.onSelect = syslogdOnSelect;
 newService.onDeSelect = null;
 newService.onConnect = null;
 newService.onDisconnect = null;
@@ -30,17 +31,32 @@ newService.onMessage = null;
 newService.onHostSelected = null;
 
 
-navAppend2( newService, "list-alt", " Log" );
+navAppend( newService, "list-alt", " Log" );
 
-newService.onSelect = function(){
+
+function syslogdOnSelect(){
+    var service = copilot.services["syslogd"];
+
 // load
     htmlLoadFile( "output", "services/syslogd/syslogd.html", function(){
         jsLoadFile( "services/syslogd/syslogd.js", function(){
+
+        // setup service
+            service.onDeSelect = syslogdOnDeSelect;
+            service.onMessage = syslogdOnMessage;
+
             syslogdRequestState();
         });
 	});
 
+}
 
+
+function syslogdOnDeSelect(){
+    var service = copilot.services["syslogd"];
+
+    service.onDeSelect = null;
+    service.onMessage = null;
 
 }
 
