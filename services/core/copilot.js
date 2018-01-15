@@ -632,6 +632,7 @@ function            copilotSelectService( serviceName ){
     if( copilot.selectedService !== null ){
         if( copilot.selectedService.onDeSelect !== null ){
             copilot.selectedService.onDeSelect();
+            copilot.selectedService.onDeSelect = null;
         }
     }
 
@@ -639,8 +640,9 @@ function            copilotSelectService( serviceName ){
     if( service.onSelect === undefined ){
         messageLog( "copilot", "onSelect function is missing" );
         return;
+    } else {
+        service.onSelect();
     }
-    service.onSelect();
 
 // remember selected service
     copilot.selectedService = service;
