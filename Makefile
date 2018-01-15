@@ -55,3 +55,22 @@ notify: ./libs/notify.min.js
 #	https://github.com/twbs/bootstrap/releases/download/v4.0.0-alpha.6/bootstrap-4.0.0-alpha.6-dist.zip
 
 
+##################################### install #####################################
+webfiles = $(shell pkg-config --libs libsodium)
+
+nginx-service: $(prefix)/lib/systemd/system/nginx-copilotc.service
+$(prefix)/lib/systemd/system/nginx-copilotc.service: nginx-copilotc.service
+	@cp -v $< $@
+	@systemctl daemon-reload
+
+nginx-conf: /etc/nginx/nginx-copilotc.conf
+/etc/nginx/nginx-copilotc.conf: nginx.conf
+	@cp -v $< $@
+
+install-nginx: nginx-service nginx-conf
+	@mkdir -p /var/www/copilotc-web
+	@cp -Rv css /var/www/copilotc-web/
+	@cp -Rv libs /var/www/copilotc-web/
+	@cp -Rv services /var/www/copilotc-web/
+	@cp -v index.html /var/www/copilotc-web/
+
