@@ -41,9 +41,9 @@
             <div class='col-sm-2 dropdown'>
                 <button id='sysStateInterval' class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown' value='5000'>5s</button>
                 <ul class='dropdown-menu'>
-                    <li><a href='#' onclick="html = document.getElementById('sysStateInterval'); html.value='1000'; html.innerHTML='1s';">1s</a></li>
                     <li><a href='#' onclick="html = document.getElementById('sysStateInterval'); html.value='5000'; html.innerHTML='5s';">5s</a></li>
                     <li><a href='#' onclick="html = document.getElementById('sysStateInterval'); html.value='30000'; html.innerHTML='30s';">30s</a></li>
+                    <li><a href='#' onclick="html = document.getElementById('sysStateInterval'); html.value='600000'; html.innerHTML='10m';">10m</a></li>
                 </ul>
             </div>
 
@@ -65,7 +65,7 @@
 
         </div>
 
-        <div class="form-group row">
+        <div class="form-group row" id='sysStateEditorActions'>
                 <button type="button" class="btn btn-default" onclick="sysStateTest()">Testen</button>
                 <button type="button" class="btn btn-primary" onclick="sysStateAppend()"><span class="pficon pficon-add-circle-o"></span></button>
                 <button type="button" class="btn btn-danger" onclick="sysStateShowCmdList()"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span></button>

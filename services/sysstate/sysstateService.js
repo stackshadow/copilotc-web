@@ -22,7 +22,6 @@ var newService = {};
 newService.id = "sysstate";
 newService.displayName = "System state";
 newService.listenGroup = "sysstate";
-newService.onAuth = sysOnAuth;
 newService.onConnect = null;
 newService.onDisconnect = null;
 newService.onMessage = null;
@@ -30,7 +29,7 @@ newService.onHostSelected = null;
 
 
 
-function sysOnAuth(){
+newService.onAuth = function(){
 
     htmlNavElement = document.getElementById( "sysstateServiceButton" );
 
@@ -60,7 +59,7 @@ function sysLoadPage(){
                         displayName = hostName;
 
                         sysStateNodeAdd( hostName, hostName );
-                        sysStateNodeHealthSet( hostName, 0.0 );
+                        sysStateNodeHealthSet( hostName, "unknown", 0.0 );
                         sysStateHealthRequest( hostName );
                         sysStateRunningRequest( hostName );
 

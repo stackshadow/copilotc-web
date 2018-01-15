@@ -30,12 +30,17 @@ function        sysStateOnMessage( topicHostName, topicGroup, topicCommand, payl
 
 
     if( topicCommand == "health" ){
-        sysStateNodeHealthSet( topicHostName, payload );
+    // get chain
+        var jsonPayload = JSON.parse(payload);
+
+        sysStateNodeHealthSet( topicHostName, jsonPayload.name, jsonPayload.health );
     }
+
 
     if( topicCommand == "cmdRunning" ){
         sysStateNodeRunningSet( topicHostName, payload );
     }
+
 
     if( topicCommand == "cmdList" ){
 
@@ -43,6 +48,7 @@ function        sysStateOnMessage( topicHostName, topicGroup, topicCommand, payl
         var jsonPayload = JSON.parse(payload);
         sysStateListAdd( jsonPayload.id, jsonPayload.description, jsonPayload.cmd, jsonPayload.interval / 1000 );
     }
+
 
     if( topicCommand == "cmdDetail" ){
         var jsonPayload = JSON.parse(payload);
@@ -106,6 +112,7 @@ function        sysStateNodeAdd( nodeName, displayName = null ){
                 <p class='card-pf-utilization-details'> \
                 <span class='card-pf-utilization-card-details-description'>Health in %</span> \
                 <div id='sysState_"+nodeHTMLName+"_chart'></div> \
+                <div id='sysState_"+nodeHTMLName+"_healthcmd'>unknown</div> \
                 <div>Running Functions: <span id='sysState_"+nodeHTMLName+"_running'>0</span></div> \
                 <div> \
                 <button type='button' class='btn btn-primary' onclick=\"sysStateCmdStartClicked('"+nodeName+"')\"><span class='glyphicon glyphicon-play'></span></button> \
@@ -164,7 +171,7 @@ function        sysStateNodeAdd( nodeName, displayName = null ){
 }
 
 
-function        sysStateNodeHealthSet( nodeName, value){
+function        sysStateNodeHealthSet( nodeName, cmd, value){
     var service = copilot.services["sysstate"];
 
 // remove . from nodeName
@@ -176,6 +183,11 @@ function        sysStateNodeHealthSet( nodeName, value){
     chart.load({
         columns: [['data', value]]
     });
+
+
+    var healthcmd = document.getElementById( "sysState_"+nodeName+"_healthcmd" );
+    healthcmd.innerHTML = cmd;
+
 
 }
 
@@ -290,6 +302,19 @@ function        sysStateShowCmdEditor( nodeName = "", uuid = "" ){
         nodeName = htmlElement.innerHTML;
     }
 
+// modify buttons to remember the node
+    htmlElement = document.getElementById( "sysStateEditorActions" );
+    if( htmlElement === null || htmlElement === undefined ){
+        return;
+    }
+
+    htmlElement.innerHTML ="\
+<button type=\"button\" class=\"btn btn-default\" onclick=\"sysStateTest('"+nodeName+"')\">Testen</button> \
+<button type=\"button\" class=\"btn btn-primary\" onclick=\"sysStateAppend('"+nodeName+"')\"><span class=\"pficon pficon-add-circle-o\"></span></button> \
+<button type=\"button\" class=\"btn btn-danger\" onclick=\"sysStateShowCmdList('"+nodeName+"')\"><span class=\"glyphicon glyphicon-log-out\" aria-hidden=\"true\"></span></button> \
+";
+
+
 // request only if uuid was set
     if( uuid != "" ){
         sysStateCmdInfoRequest( nodeName, uuid );
@@ -363,7 +388,7 @@ function        sysStateHealthRequest( nodeName ){
 
 function        sysStateHealthResetRequest( nodeName ){
     wsSendMessage( null, nodeName, "sysstate", "healthReset", "" );
-    sysStateNodeHealthSet( nodeName, 0.0 );
+    sysStateNodeHealthSet( nodeName, "unknown", 0.0 );
 }
 
 
@@ -388,7 +413,7 @@ function        sysStateCmdDeleteRequest( nodeName, uuid ){
 }
 
 
-function        sysStateTest(){
+function        sysStateTest( nodeName ){
 
     uuid = document.getElementById( "sysStateUUID" ).value;
     command = document.getElementById( "sysStateCmd" ).value;
@@ -405,12 +430,12 @@ function        sysStateTest(){
     jsonCommand['min'] = parseInt(commandMin);
     jsonCommand['max'] = parseInt(commandMax);
 
-    wsSendMessage( null, copilot.selectedHostName, "sysstate", "cmdTry", JSON.stringify(jsonCommand) );
+    wsSendMessage( null, nodeName, "sysstate", "cmdTry", JSON.stringify(jsonCommand) );
 
 }
 
 
-function        sysStateAppend(){
+function        sysStateAppend( nodeName ){
 
 
     uuid = document.getElementById( "sysStateUUID" ).value;
@@ -432,7 +457,7 @@ function        sysStateAppend(){
     jsonCommand['description'] = description;
     jsonCommand['displayName'] = sysStateDisplayName;
 
-    wsSendMessage( null, copilot.selectedHostName, "sysstate", "cmdSave", JSON.stringify(jsonCommand) );
+    wsSendMessage( null, nodeName, "sysstate", "cmdSave", JSON.stringify(jsonCommand) );
 
 }
 
