@@ -73,7 +73,7 @@ function nftHostsGet(){
     htmlLoadFile( "output", "html/nft.html", function(){
         jsLoadFile( "js/services/nft.js" );
 
-        for( hostName in copilot.hostnames ){
+        for( hostName in copilot.nodenames ){
             displayName = hostName;
 
         // a new row
@@ -107,7 +107,7 @@ function nftLoad(){
 
     nftHostObjectActive = button;
     nftHostObjectActive.className = 'active';
-    nftHostObjectActive.hostname = copilot.selectedHostName;
+    nftHostObjectActive.hostname = copilot.selectedNodeName;
 
 // hide chain tabs
     var nftChainTabBar = document.getElementById('nftChainTabBar');
@@ -135,7 +135,7 @@ function nftRequestChains(){
     nftRules = null;
 
 // we want to get the rules
-    wsSendMessage( null, service.selectedHostName, service.listenGroup, "chainsList", copilot.selectedHostName );
+    wsSendMessage( null, copilot.selectedNodeName, service.listenGroup, "chainsList", copilot.selectedNodeName );
 
 
 // hide all rules
@@ -649,22 +649,22 @@ function nftRuleDelete( chainName, ruleIndex ){
 
 function nftRulesSave(){
     var service = copilot.services["nft"];
-    if( service.selectedHostName === null ) {
+    if( copilot.selectedNodeName === null ) {
         return;
     }
 
-    wsSendMessage( null, service.selectedHostName, service.listenGroup, "save", "" );
+    wsSendMessage( null, copilot.selectedNodeName, service.listenGroup, "save", "" );
 
 }
 
 
 function nftRulesApply(){
     var service = copilot.services["nft"];
-    if( service.selectedHostName === null ) {
+    if( copilot.selectedNodeName === null ) {
         return;
     }
 
-    wsSendMessage( null, service.selectedHostName, service.listenGroup, "apply", "" );
+    wsSendMessage( null, copilot.selectedNodeName, service.listenGroup, "apply", "" );
 }
 
 
@@ -678,7 +678,7 @@ function nftChainsCountRequest(){
     service.chainsCount = {};
 
 // we want to get the rules
-    wsSendMessage( null, copilot.selectedHostName, service.listenGroup, "chainsCountGet", copilot.selectedHostName );
+    wsSendMessage( null, copilot.selectedNodeName, service.listenGroup, "chainsCountGet", copilot.selectedNodeName );
 
 }
 
@@ -686,7 +686,7 @@ function nftChainsCountRequest(){
 function nftTableChainRequest( chainName ){
     var service = copilot.services["nft"];
 
-    wsSendMessage( null, copilot.selectedHostName, service.listenGroup, "chainGet", chainName );
+    wsSendMessage( null, copilot.selectedNodeName, service.listenGroup, "chainGet", chainName );
 }
 
 
@@ -700,7 +700,7 @@ function nftTableChainSave( chainName, jsonRulesArray ){
     jsonChainObject[chainName] = jsonRulesArray;
 
 
-    wsSendMessage( null, service.selectedHostName, service.listenGroup, "chainSave", JSON.stringify(jsonChainObject) );
+    wsSendMessage( null, copilot.selectedNodeName, service.listenGroup, "chainSave", JSON.stringify(jsonChainObject) );
 }
 
 

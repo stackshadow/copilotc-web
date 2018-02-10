@@ -49,7 +49,7 @@ function sysOnSelect(){
                     service.onDeSelect = sysOnDeSelect;
                     service.onMessage = sysStateOnMessage;
 
-                    for( hostName in copilot.hostnames ){
+                    for( hostName in copilot.nodenames ){
                         displayName = hostName;
 
                         sysStateNodeAdd( hostName, hostName );
