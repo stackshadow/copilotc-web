@@ -25,10 +25,10 @@ console.log( typeof dummy )
 var copilot = {};
 copilot.ws = null;
 copilot.wsConnected = false;
-copilot.hostnames = {};
+copilot.nodenames = {};
 copilot.services = [];
-copilot.myhostname = "localhost";
-copilot.selectedHostName = null;
+copilot.myNodeName = "local";
+copilot.selectedNodeName = null;
 copilot.selectedService = null;
 copilot.simulation = false;
 
@@ -371,10 +371,10 @@ function			wsSendMessage( id, targetHostName, group, command, payloadString ){
 
 // no hostname
 	if( targetHostName === null || targetHostName === undefined ){
-		if( copilot.selectedHostName === null ){
-			jsonMessage["t"] = copilot.myhostname
+		if( copilot.selectedNodeName === null ){
+			jsonMessage["t"] = copilot.myNodeName
 		} else {
-			jsonMessage["t"] = copilot.selectedHostName
+			jsonMessage["t"] = copilot.selectedNodeName
 		}
 	}
 
@@ -424,10 +424,10 @@ function            wsMessageSendObject( topicGroup, topicCommand, payload ){
     }
 
 //
-	if( copilot.selectedHostName === null ){
-		topicHostName = copilot.myhostname
+	if( copilot.selectedNodeName === null ){
+		topicHostName = copilot.myNodeName
 	} else {
-		topicHostName = copilot.selectedHostName
+		topicHostName = copilot.selectedNodeName
 	}
 
 
@@ -454,10 +454,10 @@ function            wsMessageSendValue( topicGroup, topicCommand, id, value ){
     }
 
 //
-	if( copilot.selectedHostName === null ){
-		topicHostName = copilot.myhostname
+	if( copilot.selectedNodeName === null ){
+		topicHostName = copilot.myNodeName
 	} else {
-		topicHostName = copilot.selectedHostName
+		topicHostName = copilot.selectedNodeName
 	}
 
 
@@ -569,18 +569,18 @@ copilot.onMessage = function( topicHostName, topicGroup, topicCommand, payload )
         messageAlert( message );
     }
 
-    if( topicGroup == "co" && topicCommand == "hostName" ){
-        copilot.myhostname = payload;
-		messageLog( "Our Hostname: ", copilot.myhostname );
+    if( topicGroup == "co" && topicCommand == "nodeName" ){
+        copilot.myNodeName = payload;
+		messageLog( "Our NodeName: ", copilot.myNodeName );
 
 	// and we select it by default ;)
-		copliotNodeSelect( copilot.myhostname );
+		copliotNodeSelect( copilot.myNodeName );
     }
 
 // we just remember the hostname
-// other plugins maybe do something with the copilot.hostnames-object
+// other plugins maybe do something with the copilot.nodenames-object
     if( topicHostName != "" ){
-        copilot.hostnames[topicHostName] = "";
+        copilot.nodenames[topicHostName] = "";
     }
 
 
@@ -588,7 +588,7 @@ copilot.onMessage = function( topicHostName, topicGroup, topicCommand, payload )
 	if( topicGroup == "co" && topicCommand == "nodes" ){
 		jsonPayload = JSON.parse(payload);
 		for( hostObject in jsonPayload ){
-			copilot.hostnames[hostObject] = "";
+			copilot.nodenames[hostObject] = "";
 		}
 	}
 
@@ -647,19 +647,23 @@ function            copilotSelectService( serviceName ){
 // remember selected service
     copilot.selectedService = service;
 }
-function            copilotGetHostName(){
-	wsSendMessage( "pingid", "all", "co", "hostNameGet", "" );
+function            copilotGetMyNodeName(){
+	wsSendMessage( "pingid", "all", "co", "nodeNameGet", "" );
 }
-function			copliotNodeSelect( hostName ){
+
+
+
+// ###################################### Nodes-Selection-Menu ######################################
+
+function			copliotNodeSelect( nodeName ){
 
 // save the hostname
-	copilot.selectedHostName = hostName;
+	copilot.selectedNodeName = nodeName;
 
 // show it to the user
-	htmlSelectedHost = document.getElementById( "selectedHost" );
+	htmlSelectedHost = document.getElementById( "selectedNode" );
 	if( htmlSelectedHost !== undefined && htmlSelectedHost !== null ){
-		htmlSelectedHost.className = "label label-success";
-		htmlSelectedHost.innerHTML = hostName;
+		htmlSelectedHost.innerHTML = nodeName + "<span class=\"caret\"></span>";
 	}
 
 // notify all plugins/services
@@ -669,21 +673,43 @@ function			copliotNodeSelect( hostName ){
 
     // call the function
 		if( service.onHostSelected !== null && service.onHostSelected !== undefined ){
-			service.onHostSelected( copilot.selectedHostName );
+			service.onHostSelected( copilot.selectedNodeName );
 		}
     }
 
 // call the core function
     if( copilot.onHostSelected !== null ){
-        copilot.onHostSelected( copilot.selectedHostName );
+        copilot.onHostSelected( copilot.selectedNodeName );
     }
 
 // notify user
-    messageInfo( "Host \"" + copilot.selectedHostName + "\" selected" );
+    messageInfo( "Host \"" + copilot.selectedNodeName + "\" selected" );
 
 }
+
+function			copliotNodeSelectionAdd( nodeName ){
+
+
+// get drop-down of group members
+    var selectedNodeMenu = document.getElementById( "selectedNodeMenu" );
+
+// create new ro
+	var newNode = document.createElement('li');
+    //newGroupSelector.groupName = groupName;
+    newNode.innerHTML = "<a href=\"#\">"+groupName+"</a>";
+
+    //newGroupSelector.className = "disabled"
+
+// append new row
+    selectedNodeMenu.appendChild( newNode );
+
+}
+
+
+
+
 function            copilotNodeRemove( nodeName ){
-    wsSendMessage( null, copilot.selectedHostName, "co", "nodeRemove", nodeName );
+    wsSendMessage( null, copilot.selectedNodeName, "co", "nodeRemove", nodeName );
 }
 function            copilotPing(){
 	wsSendMessage( "pingid", "all", "co", "ping", "" );
