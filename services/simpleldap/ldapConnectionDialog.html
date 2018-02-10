@@ -9,7 +9,7 @@
     </div>
 
     <div class="form-group row">
-        <label class="col-form-label" for="ldapConfigAdminDN">Admin DN:</label>
+        <label class="col-form-label" for="ldapConfigAdminDN">Admin DN ( FULL DN ):</label>
         <input id="ldapConfigAdminDN" type="text" class="form-control" placeholder="cn=admin,cn=config"
             value="">
         </input>
@@ -23,7 +23,7 @@
     </div>
 
     <div class="form-group row">
-        <label class="col-form-label" for="ldapConfigUserDN">User DN:</label>
+        <label class="col-form-label" for="ldapConfigUserDN">User DN ( FULL DN ):</label>
         <input id="ldapConfigUserDN" type="text" class="form-control" placeholder="cn=admin,dc=evilbrain,dc=de"
             value="">
         </input>
@@ -44,14 +44,14 @@
     </div>
 
     <div class="form-group row">
-        <label class="col-form-label" for="ldapGroupDN">Group DN:</label>
+        <label class="col-form-label" for="ldapGroupDN">Group DN ( without the Base DN ! ):</label>
         <input id="ldapGroupDN" type="text" class="form-control" placeholder="ou=groups"
             value="">
         </input>
     </div>
 
     <div class="form-group row">
-        <label class="col-form-label" for="ldapUserDN">User DN:</label>
+        <label class="col-form-label" for="ldapUserDN">User DN ( without the Base DN ! ):</label>
         <input id="ldapUserDN" type="text" class="form-control" placeholder="ou=accounts"
             value="">
         </input>
@@ -62,7 +62,7 @@
             <button type="button" class="btn btn-success" onclick="ldapConnectionEditorSave();">
             <span class="glyphicon glyphicon-log-in"></span> Speichern</button>
 
-            <button type="button" class="btn btn-warning" onclick="ldapConnectionEditorHide();">
+            <button type="button" class="btn btn-warning" onclick="ldapConnectionEditorCancel();">
             <span class="glyphicon glyphicons-edit"></span> Abbrechen</button>
         </div>
     </div>

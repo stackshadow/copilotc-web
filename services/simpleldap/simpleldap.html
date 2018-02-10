@@ -1,18 +1,18 @@
 
+<div class="container">
+    <h3>Status: <span id="ldapConnectionState" class="label label-default">Unknown</span>
+    <div class="btn-group">
+        <button type="button" class="btn btn-success" id="ldapConnectBtn" onclick="ldapConnectRequest();">
+        <span class="glyphicon glyphicon-log-in"></span> Verbinden</button>
 
-
-<div class="btn-group">
-    <button type="button" class="btn btn-success" id="ldapConnectBtn" onclick="ldapConnectRequest();">
-    <span class="glyphicon glyphicon-log-in"></span> Verbinden</button>
-
-    <button type="button" class="btn btn-info" id="ldapConnectEditBtn" onclick="ldapConnectionEditClicked();">
-    <span class="glyphicon glyphicons-edit"></span> LDAP-Verbindung bearbeiten</button>
+        <button type="button" class="btn btn-info" id="ldapConnectEditBtn" onclick="ldapConnectionEditorShow();">
+        <span class="glyphicon glyphicons-edit"></span> LDAP-Verbindung bearbeiten</button>
+    </div>
+    </h3>
 </div>
 
 
-<div id='ldapConnectionEditor' class="container" style="display:none;" ></div>
-
-<div id='ldapLists' class="container" style="display:none;" ></div>
+<div id='ldapLists' class="container col-md-12" ></div>
 
 
 

@@ -2,16 +2,16 @@
 
 
 <h1>Benutzer
-    <button type='button' class='btn btn-primary disabled' onclick="">
+    <button type='button' class='btn btn-primary' onclick="ldapUserListRequest();">
         <span class="glyphicon glyphicon-refresh"></span>
     </button>
-    <button type='button' class='btn btn-primary disabled' onclick="">
+    <button type='button' class='btn btn-primary' onclick="ldapUserEditorShow();">
         <span class="glyphicon glyphicon-plus"></span>
     </button>
 </h1>
 
 <!-- Table -->
-<table id="simpleldapGroupTable" class="table table-striped" >
+<table id="simpleldapUserTable" class="table table-striped" >
 
     <thead>
         <tr>
@@ -20,7 +20,7 @@
             <th>Aktion</th>
         </tr>
     </thead>
-    <tbody id="simpleldapGroupValues" class='disabled'></tbody>
+    <tbody class='disabled'></tbody>
 
 </table>
 
@@ -28,10 +28,10 @@
 
 
 <h1>Gruppen
-    <button type='button' class='btn btn-primary disabled' onclick="">
+    <button type='button' class='btn btn-primary' onclick="ldapGroupListRequest();">
         <span class="glyphicon glyphicon-refresh"></span>
     </button>
-    <button type='button' class='btn btn-primary disabled' onclick="">
+    <button type='button' class='btn btn-primary' onclick="ldapGroupEditorShow();">
         <span class="glyphicon glyphicon-plus"></span>
     </button>
 </h1>
@@ -50,3 +50,5 @@
     <tbody id="simpleldapGroupValues" class='disabled'></tbody>
 
 </table>
+
+

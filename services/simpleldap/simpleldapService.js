@@ -23,8 +23,8 @@ newService.id = "ldapusers";
 newService.displayName = "LDAP User Management";
 newService.listenGroup = "ldap";
 newService.onAuth = null;
-newService.onSelect = function(){ ldapLoadPage(); };
-newService.onDeSelect = function(){ ldapUnLoadPage(); };
+newService.onSelect = ldapLoadPage;
+newService.onDeSelect = ldapUnLoadPage;
 newService.onConnect = null;
 newService.onDisconnect = null;
 newService.onMessage = null;
@@ -37,28 +37,40 @@ navAppend( newService, "user", " LDAP Users" );
 
 
 function ldapLoadPage(){
+    var service = copilot.services["ldapusers"];
 
 
     htmlLoadFile( "output", "services/simpleldap/simpleldap.html", function(){
         jsLoadFile( "services/simpleldap/simpleldap.js", function(){
+            //htmlLoadFile( "ldapConnectionEditor", "services/simpleldap/ldapConnectionDialog.html", function(){
+                htmlLoadFile( "ldapLists", "services/simpleldap/ldapList.html", function(){
 
-            htmlLoadFile( "ldapConnectionEditor", "services/simpleldap/ldapConnectionDialog.html" );
-            htmlLoadFile( "ldapLists", "services/simpleldap/ldapList.html" );
+                // setup service
+                    service.onDeSelect = ldapUnLoadPage;
+                    service.onMessage = ldapOnMessage;
 
-        // default hide
-            ldapConnectionEditorHide();
+                // request connection status
+                    ldapStatusRequest();
+
+
+
+
+                });
+            //});
         });
     });
 
-
-
 }
 
+
 function ldapUnLoadPage(){
+    var service = copilot.services["syslogd"];
 
-    var htmlObject = document.getElementById( "ldapConnectionEditor" );
-    htmlObject.innerHTML = "";
+// unset callbacks
+    service.onDeSelect = null;
+    service.onMessage = null;
 
+// remove documents
     var htmlObject = document.getElementById( "ldapLists" );
     htmlObject.innerHTML = "";
 
