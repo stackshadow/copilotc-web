@@ -5,10 +5,50 @@
 
 function copilotdOnMessage( topicHostName, topicGroup, topicCommand, payload ){
 
+// respond of all nodes
+    if( topicCommand == "nodeForEdit" ){
+        jsonPayload = JSON.parse( payload );
+
+        if( 'nodename' in jsonPayload ){ nodeName = jsonPayload.nodename; } else { nodeName = "unknown"; }
+        if( 'host' in jsonPayload ){ nodeHost = jsonPayload.host; } else { nodeHost = "unknown"; }
+        if( 'port' in jsonPayload ){ nodePort = jsonPayload.port; } else { nodePort = 0; }
+        if( 'type' in jsonPayload ){ nodeType = jsonPayload.type; } else { nodeType = 0; }
+
+        copilotdNodeEditorSet( parseInt(nodeType), nodeName, nodeHost, nodePort );
+
+        return;
+
+    }
+
+    if( topicCommand == "nodes" ){
+
+
+        jsonPayload = JSON.parse( payload );
+        for( nodeName in jsonPayload ){
+            jsonNode = jsonPayload[nodeName];
+            if( 'host' in jsonNode ){ nodeHost = jsonNode.host; } else { nodeHost = "unknown"; }
+            if( 'port' in jsonNode ){ nodePort = jsonNode.port; } else { nodePort = 0; }
+            if( 'type' in jsonNode ){ nodeType = jsonNode.type; } else { nodeType = 0; }
+
+            copilotdNodesTableAppend( nodeName, nodeHost, nodePort, nodeType );
+
+        // we add an entry to the settings dialog
+            htmlSetting = document.createElement('div');
+            htmlSetting.id = "dd_" + nodeName;
+            htmlSetting.innerHTML = "<button type='button' class='btn btn-primary' onclick=\"copliotNodeSelect('"+nodeName+"')\">"+nodeName+"</button>";
+            settingAppend( htmlSetting );
+
+
+        // request version of copilotd
+            wsSendMessage( null, nodeName, "co", "versionGet", "" );
+
+        }
+
+	}
+
 	if( topicCommand == "pong" ){
 		htmlTableBody =  document.getElementById( "copilotd_hosts_values" );
-		copilotdHostTableAppend( htmlTableBody, topicHostName, "" );
-		copilotdHostTableSetActive( topicHostName );
+		copilotdNodesTableSetActive( topicHostName );
 
 		return;
 	}
@@ -38,36 +78,10 @@ function copilotdOnMessage( topicHostName, topicGroup, topicCommand, payload ){
 
 	}
 
-	if( topicCommand == "nodes" ){
 
-        htmlTableBody =  document.getElementById( "copilotd_hosts_values" );
-        htmlTableBody.innerHTML = "";
-
-        jsonPayload = JSON.parse( payload );
-        for( nodeName in jsonPayload ){
-            jsonNode = jsonPayload[nodeName];
-            if( 'host' in jsonNode ){ nodeHost = jsonNode.host; } else { nodeHost = "unknown"; }
-            if( 'port' in jsonNode ){ nodePort = jsonNode.port; } else { nodePort = 0; }
-            nodeType = jsonNode.type;
-
-            copilotdHostTableAppend( htmlTableBody, nodeName, nodeHost, nodePort, nodeType, "" );
-
-        // we add an entry to the settings dialog
-            htmlSetting = document.createElement('div');
-            htmlSetting.id = "dd_" + nodeName;
-            htmlSetting.innerHTML = "<button type='button' class='btn btn-primary' onclick=\"copliotNodeSelect('"+nodeName+"')\">"+nodeName+"</button>";
-            settingAppend( htmlSetting );
-
-
-        // request version of copilotd
-            wsSendMessage( null, nodeName, "co", "versionGet", "" );
-
-        }
-
-	}
 
 	if( topicCommand == "version" ){
-		copliotdHostTableSetVersion( topicHostName, payload );
+		copliotdNodesTableSetVersion( topicHostName, payload );
 	}
 
     if( topicCommand == "serverConfig" ){
@@ -118,10 +132,10 @@ function copilotdOnMessage( topicHostName, topicGroup, topicCommand, payload ){
 
 function copilotdSimulation( topicHostName, topicGroup, topicCommand, payload ){
 
-    if( topicCommand == "hostNameGet" ){
+    if( topicCommand == "nodeNameGet" ){
 
 
-        copilot.onMessage( "simulation", "co", "hostName", "simulation" );
+        copilot.onMessage( "simulation", "co", "nodeName", "simulation" );
     }
 
 
@@ -132,12 +146,12 @@ function copilotdPing(){
     var service = copilot.services["copliotd"];
 
 // set all to inactive
-	copilotdHostTableSetAllInactive();
+	copilotdNodesTableSetAllInactive();
 
 // reset
     service.nodesActive = 0;
     service.nodesInActive = 0;
-    for( hostName in copilot.hostnames ){
+    for( hostName in copilot.nodenames ){
         service.nodesInActive++;
     }
 
@@ -151,121 +165,100 @@ function copilotdPing(){
 
 
 
+// ###################################### Node functions ######################################
+function copilotdNodesRequest(){
+    copilotdNodesTableClear();
+    wsSendMessage( null, copilot.selectedNodeName, "co", "nodesGet", "" );
+}
+
+
+function copilotdNodeVersionRequest( nodeName ){
+    wsSendMessage( null, nodeName, "co", "versionGet", "" );
+}
+
+
 
 // ###################################### Host Table ######################################
-function copilotdHostTableClear(){
-	htmlTableBody =  document.getElementById( "copilotd_hosts_values" );
-	htmlTableBody.innerHTML = "";
+function copilotdNodesTableClear(){
+// get table
+    var nodeTable = document.getElementById( "nodeTable" );
+    var nodeTableValues = nodeTable.tBodies[0];
+    nodeTableValues.innerHTML = "";
 
 	return;
 }
 
 
-function copilotdHostTableRefresh(){
-    wsSendMessage( null, null, "co", "nodesGet", "" );
-}
-
-
-function copilotdHostTableVersionRefresh( nodeName ){
-    wsSendMessage( null, nodeName, "co", "versionGet", "" );
-}
-
-
-function copilotdHostTableAppend( htmlTableBody, nodename, hostname, port, typ, version ){
+function copilotdNodesTableAppend( nodename, hostname, port, typ ){
 
 // host already exist ?
-	newRow = document.getElementById( "copilotd_knownHost_" + nodename );
+	newRow = document.getElementById( "nodeTableItem_" + nodename );
 	if( newRow !== undefined && newRow !== null ){
 		messageLog( "copilotd.js", "Host '" + nodename + "' already known." );
 		return;
 	}
 
-// row
-	newRow = document.createElement('tr');
-	newRow.id = "copilotd_knownHost_" + nodename;
-	newRow.className = "danger";
-	htmlTableBody.appendChild( newRow );
+// table
+    var nodeTable = document.getElementById( "nodeTable" );
+    var nodeTableValues = nodeTable.tBodies[0];
 
-// node
-	newNodeName = document.createElement('td');
-	newNodeName.innerHTML  = nodename;
-	newRow.appendChild( newNodeName );
-
-// state
-	htmlState = document.createElement('td');
-	newHostNameState = document.createElement('span');
-	newHostNameState.id = "copilotd_knownHost_" + nodename + "_state";
-	newHostNameState.className = "label label-success";
-	newHostNameState.className = "label label-danger";
-	newHostNameState.innerHTML = "unknown";
-	htmlState.appendChild( newHostNameState );
-	newRow.appendChild( htmlState );
-
-// type
-	newHostType = document.createElement('td');
-	newHostTypeName = document.createElement('span');
-	newHostTypeName.className = "label label-primary";
+// type text
     if( typ == 0 ){
-        newHostTypeName.innerHTML = "unknown";
+        typeText = "unknown";
     }
     if( typ == 1 ){
-        newHostTypeName.innerHTML = "server";
+        typeText = "server";
     }
     if( typ == 10 ){
-        newHostTypeName.innerHTML = "connection to server";
+        typeText = "connection to server";
     }
     if( typ == 11 ){
-        newHostTypeName.innerHTML = "incoming connection";
+        typeText = "incoming connection";
     }
-    newHostType.appendChild( newHostTypeName );
-	newRow.appendChild( newHostType );
-
-// hostName
-	newHostname = document.createElement('td');
-	newHostname.innerHTML = hostname;
-	newRow.appendChild( newHostname );
-
-// port
-	newPort = document.createElement('td');
-	newPort.innerHTML  = port;
-	newRow.appendChild( newPort );
 
 
-// version
-	newVersion = document.createElement('td');
-	newVersion.id = "copilotd_knownHost_" + nodename + "_version";
-	newRow.appendChild( newVersion );
-
-// actions
-	newAction = document.createElement('td');
-// SSH-Info
-	htmlActionShowSSHInfo = document.createElement('div');
-	htmlActionShowSSHInfo.className = "btn-group";
-    htmlActionShowSSHInfo.innerHTML  = "<div class='btn-group'>";
-	htmlActionShowSSHInfo.innerHTML += "<button type='button' class='btn btn-primary' onclick=\"copliotNodeSelect('"+nodename+"')\">Select Host</button>";
-	htmlActionShowSSHInfo.innerHTML += "<button type='button' class='btn btn-danger' onclick=\"copilotNodeRemove('"+nodename+"')\">Remove</button>";
-	htmlActionShowSSHInfo.innerHTML += "</div>";
-	newAction.appendChild( htmlActionShowSSHInfo );
-	newRow.appendChild( newAction );
+// row
+	newRow = document.createElement('tr');
+	newRow.id = "nodeTableItem_" + nodename;
+	newRow.className = "danger";
+    newRow.innerHTML = " \
+    <td>" + nodename + "</td> \
+    <td><span id='nodeTableItem_" + nodename + "_state' class='label label-danger'>unknown</span></td> \
+    <td><span                                           class='label label-primary'>"+typeText+"</span></td> \
+    <td>" + hostname + "</td> \
+    <td>" + port + "</td> \
+    <td is='nodeTableItem_" + nodename + "_version'></td> \
+    <div class='btn-group'> \
+        <button type='button' class='btn btn-primary' onclick=\"copilotdNodeEditorShow('"+nodename+"')\"> \
+            <span class=\"glyphicon glyphicon-cog\"></span> \
+        </button> \
+        <button type='button' class='btn btn-primary' onclick=\"copliotNodeSelect('"+nodename+"')\"> \
+            <span class=\"glyphicon glyphicon-play-circle\"></span> \
+        </button> \
+        <button type='button' class='btn btn-danger' onclick=\"copilotNodeRemove('"+nodename+"')\"> \
+            <span class=\"glyphicon glyphicon-trash\"></span> \
+        </button> \
+	</div>";
+	nodeTableValues.appendChild( newRow );
 
 	messageLog( "copilotd.js", "Append Host '" + hostname + "'" );
 	return;
 }
 
 
-function copilotdHostTableSetAllInactive(){
+function copilotdNodesTableSetAllInactive(){
 
     var service = copilot.services["copliotd"];
 
 // iterate over hosts and set all classes to danger
-	for( hostName in copilot.hostnames ){
-		hostRow = document.getElementById( "copilotd_knownHost_" + hostName );
+	for( hostName in copilot.nodenames ){
+		hostRow = document.getElementById( "nodeTableItem_" + hostName );
 		if( hostRow !== undefined && hostRow !== null ){
 			hostRow.className = "danger";
 		}
 
 	// change state-badge
-		hostState = document.getElementById( "copilotd_knownHost_" + hostName + "_state" );
+		hostState = document.getElementById( "nodeTableItem_" + hostName + "_state" );
 		if( hostState !== undefined && hostState !== null ){
 			hostState.className = "label label-danger";
 			hostState.innerHTML = "unknown";
@@ -276,10 +269,10 @@ function copilotdHostTableSetAllInactive(){
 }
 
 
-function copilotdHostTableSetActive( hostname ){
+function copilotdNodesTableSetActive( hostname ){
 
 // host exist ?
-	newRow = document.getElementById( "copilotd_knownHost_" + hostname );
+	newRow = document.getElementById( "nodeTableItem_" + hostname );
 	if( newRow === undefined || newRow === null ){
 		messageLog( "copilotd.js", "Host '" + hostname + "' dont exist in table." );
 		return;
@@ -288,7 +281,7 @@ function copilotdHostTableSetActive( hostname ){
 	newRow.className = "active";
 
 // change state-badge
-	newHostNameState = document.getElementById( "copilotd_knownHost_" + hostname + "_state" );
+	newHostNameState = document.getElementById( "nodeTableItem_" + hostname + "_state" );
 	newHostNameState.className = "label label-success";
 	newHostNameState.innerHTML = "active"
 
@@ -296,9 +289,9 @@ function copilotdHostTableSetActive( hostname ){
 }
 
 
-function copliotdHostTableSetVersion( hostname, version ){
+function copliotdNodesTableSetVersion( hostname, version ){
 // host exist ?
-	htmlVersion = document.getElementById( "copilotd_knownHost_" + hostname + "_version" );
+	htmlVersion = document.getElementById( "nodeTableItem_" + hostname + "_version" );
 	if( htmlVersion === undefined || htmlVersion === null ){
 		messageLog( "copilotd.js", "Host '" + hostname + "' dont have an version field." );
 		return;
@@ -308,49 +301,101 @@ function copliotdHostTableSetVersion( hostname, version ){
 }
 
 
-function copilotdHostTableLoad(){
-    var service = copilot.services["copliotd"];
 
+// ###################################### Node Editor ######################################
 
-	htmlTableBody =  document.getElementById( "copilotd_hosts_values" );
-	htmlTableBody.innerHTML = "";
-
-	for( hostName in copilot.hostnames ){
-		nodeName = hostName;
-        nodeHost = "";
-        nodePort = 0;
-        nodeType = 0;
-
-		copilotdHostTableAppend( htmlTableBody, nodeName, nodeHost, nodePort, nodeType, "" );
-
-	// request version of copilotd
-		wsSendMessage( null, hostName, "co", "copilotdVersionGet", "" );
-
-	}
-
-	return;
+function copilotdNodeNew(){
+    copilotdNodeEditorShow();
 }
 
 
-function copilotdNodeAdd(){
-    $("#nodeClientAddDialog").modal('show');
+function copilotdNodeEditorShow( nodeName = null ){
+// create json
+    var jsonObject = {};
+    jsonObject.id = "default";
+
+
+    if( nodeName === null ){
+        copilotdNodeEditorSet();
+    } else {
+        wsSendMessage( null, copilot.selectedNodeName, "co", "nodeForEditGet", nodeName );
+    }
+
 }
 
 
-function copilotdNodeAddSave(){
+function copilotdNodeEditorSet( nodeType = 0, nodeName = null, hostName = null, port = 0 ){
+
+
+    sidePanelLoad( "Node", "services/copilotd/nodeEditor.html", function(){
+
+        var htmlNodeType = document.getElementById( "nodeTypeSelector" );
+        var htmlNodeName = document.getElementById( "nodeClientAddNodeName" );
+        var htmlHostName = document.getElementById( "nodeClientAddHostName" );
+        var htmlHostPort = document.getElementById( "nodeClientAddHostPort" );
+
+
+
+        htmlNodeType.value = 0;
+        htmlNodeType.innerHTML = "Unknown";
+        if( nodeType == 1 ){
+            htmlNodeType.innerHTML = "Allow incoming";
+        }
+        if( nodeType == 10 ){
+            htmlNodeType.innerHTML = "Connect to client";
+        }
+        if( nodeType == 11 ){
+            htmlNodeType.innerHTML = "Incoming connection";
+        }
+        htmlNodeType.value = nodeType
+
+
+        if( nodeName !== null ){
+            htmlNodeName.value = nodeName;
+            htmlNodeName.disabled = true;
+        } else {
+            htmlNodeName.value = "";
+            htmlNodeName.disabled = false;
+        }
+
+        if( hostName !== null ){
+            htmlHostName.value = hostName;
+        } else {
+            htmlHostName.value = "";
+        }
+
+        if( port != 0 ){
+            htmlHostPort.value = port;
+        } else {
+            htmlHostPort.value = 4567;
+        }
+
+    });
+
+}
+
+
+function copilotdNodeEditorCancel(){
+    sidePanelMinimize();
+}
+
+
+function copilotdNodeEditorSave(){
     $("#nodeClientAddDialog").modal('hide');
 
+    var htmlNodeType = document.getElementById( "nodeTypeSelector" );
     var nodeName = document.getElementById( "nodeClientAddNodeName" ); nodeName = nodeName.value;
     var hostName = document.getElementById( "nodeClientAddHostName" ); hostName = hostName.value;
     var hostPort = document.getElementById( "nodeClientAddHostPort" ); hostPort = hostPort.value;
 
     var server = {}
     server['node'] = nodeName;
+    server['type'] = parseInt( htmlNodeType.value );
     server['host'] = hostName;
     server['port'] = parseInt(hostPort);
 
-    wsSendMessage( null, copilot.selectedHostName, "co", "nodeClientAdd", JSON.stringify(server) );
-
+    wsSendMessage( null, copilot.selectedNodeName, "co", "nodeSave", JSON.stringify(server) );
+    copilotdNodesTableClear();
 
 }
 
@@ -371,22 +416,22 @@ function copilotdServeToggle( htmlCheckbox ){
 
 
 function copilotdServerSave(){
-    var coreService = copilot.services["nft"];
 
-    hostName = document.getElementById( "copilotdServeAddr" ).value;
-    hostPort = document.getElementById( "copilotdServePort" ).value;
+    var hostName = document.getElementById( "copilotdServeAddr" ); hostName = hostName.value;
+    var hostPort = document.getElementById( "copilotdServePort" ); hostPort = hostPort.value;
 
     var server = {}
+    server['node'] = copilot.selectedNodeName;
     server['host'] = hostName;
-    server['port'] = hostPort;
+    server['port'] = parseInt(hostPort);
 
     if( ! document.getElementById( "copilotdServeAddr" ).disabled ){
-        server['enabled'] = "1";
+        server['type'] = 1;
     } else {
-        server['enabled'] = "0";
+        server['type'] = 0;
     }
 
-    wsSendMessage( null, copilot.selectedHostName, "cocom", "serverSave", JSON.stringify(server) );
+    wsSendMessage( null, copilot.selectedNodeName, "cocom", "nodeSave", JSON.stringify(server) );
 }
 
 
@@ -414,7 +459,7 @@ function copilotdServerSet( host, port, enabled ){
 function unacceptedKeysRefresh(){
     htmlTableBody = document.getElementById( "unacceptedKeyValues" );
     htmlTableBody.innerHTML = "";
-    wsSendMessage( null, copilot.selectedHostName, "cocom", "requestKeysGet", "" );
+    wsSendMessage( null, copilot.selectedNodeName, "cocom", "requestKeysGet", "" );
 }
 
 
@@ -455,13 +500,13 @@ function unacceptedKeysAdd( htmlTableBody, fingerprint ){
 
 
 function unacceptedKeyAccept( fingerprint ){
-    wsSendMessage( null, copilot.selectedHostName, "cocom", "requestKeyAccept", fingerprint );
+    wsSendMessage( null, copilot.selectedNodeName, "cocom", "requestKeyAccept", fingerprint );
     acceptedKeysRefresh();
 }
 
 
 function unacceptedKeyRemove( fingerprint ){
-    wsSendMessage( null, copilot.selectedHostName, "cocom", "requestKeyRemove", fingerprint );
+    wsSendMessage( null, copilot.selectedNodeName, "cocom", "requestKeyRemove", fingerprint );
 }
 
 
@@ -470,7 +515,7 @@ function unacceptedKeyRemove( fingerprint ){
 function acceptedKeysRefresh(){
     htmlTableBody = document.getElementById( "acceptedKeyValues" );
     htmlTableBody.innerHTML = "";
-    wsSendMessage( null, copilot.selectedHostName, "cocom", "acceptedKeysGet", "" );
+    wsSendMessage( null, copilot.selectedNodeName, "cocom", "acceptedKeysGet", "" );
 }
 
 
@@ -510,7 +555,7 @@ function acceptedKeysAdd( htmlTableBody, fingerprint ){
 
 
 function acceptedKeyRemove( fingerprint ){
-    wsSendMessage( null, copilot.selectedHostName, "cocom", "acceptedKeyRemove", fingerprint );
+    wsSendMessage( null, copilot.selectedNodeName, "cocom", "acceptedKeyRemove", fingerprint );
 }
 
 

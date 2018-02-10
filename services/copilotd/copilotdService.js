@@ -3,7 +3,7 @@ var newService = {};
 newService.id = "copliotd";
 newService.displayName = "Copliot";
 newService.listenGroup = "";
-newService.onAuth = copilotGetHostName;
+newService.onAuth = copilotGetMyNodeName;
 newService.onSelect = copliotdOnSelect;
 newService.onDeSelect = null;
 newService.onConnect = null;
@@ -33,10 +33,7 @@ function copliotdOnSelect(){
 
 
             // call command to get known hosts from copilotd
-                copilotdHostTableRefresh();
-
-            // get server info
-                wsSendMessage( null, null, "cocom", "serverConfigGet", "" );
+                copilotdNodesRequest();
 
             // get the list with not authorized keys
                 unacceptedKeysRefresh();
