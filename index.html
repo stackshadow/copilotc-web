@@ -13,8 +13,16 @@
 		<link href="libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 		<script src="libs/jquery/jquery-3.2.1.min.js"></script>
+        <!-- jquery-ui -->
+        <script src="libs/jquery/jquery-ui-1.12.1.min.js"></script>
+
 		<!-- Include all compiled plugins (below), or include individual files as needed -->
 		<script src="libs/bootstrap/js/bootstrap.min.js"></script>
+
+        <!-- Tokenfield -->
+        <link href="libs/bootstrap-tokenfield.css" rel="stylesheet">
+        <script src="libs/bootstrap-tokenfield.js"></script>
+
         <!-- doDB CSS -->
         <link href="css/doDB.css" rel="stylesheet">
 
@@ -51,16 +59,27 @@
             </ul>
 
             <ul class="nav navbar-nav navbar-right" id="navigationRight" >
-				<li><div id="selectedHost" class="label label-danger">No selected host</div></li>
+
+            <!-- dopdown -->
+                <div class="dropdown" id="ldapGroupMemberDropdownButton">
+                    <button id="selectedNode" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">No selected host
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" id="selectedNodeMenu"></ul>
+                </div>
+
 				<li><div id="connectState" class="label label-danger">...</div></li>
 <!--                <li><a href="javascript:WebSocketPing()">Ping</a></li> -->
-                <li><div class="dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-                        <span class="caret"></span>
-                        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-                    </button>
-                    <ul id="settingsDropDown" class="dropdown-menu"></ul>
-                </div></li>
+                <li>
+                    <div class="dropdown">
+                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                        </button>
+                        <ul id="settingsDropDown" class="dropdown-menu"></ul>
+                    </div>
+                </li>
+
             </ul>
 
         </div>
