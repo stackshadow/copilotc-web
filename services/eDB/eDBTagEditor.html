@@ -1,0 +1,42 @@
+
+<!-- Modal -->
+<div id="nodeClientAddDialog">
+
+
+    <div class="form-group">
+        <label for="eDBTagEditorName">Name:</label>
+        <input id="eDBTagEditorName" type="text" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="eDBTagEditorDisplayName">Anzeigename:</label>
+        <input id="eDBTagEditorDisplayName" type="text" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="eDBTagEditorDescription">Beschreibung:</label>
+        <input id="eDBTagEditorDescription" type="text" class="form-control" />
+    </div>
+	
+	<select id="eDBTagEditorParent" class="selectpicker" data-live-search="true" multiple>
+		<option>Testing</option>
+	</select>
+	
+
+	
+	
+	
+
+
+    <div class="form-group row">
+        <div class="btn-group">
+            <button type="button" class="btn btn-success" onclick="eDBTagEditorSaveRequest();">
+            <span class="glyphicon glyphicon-log-in"></span> Speichern</button>
+
+            <button type="button" class="btn btn-warning" onclick="eDBTagEditorClose();">
+            <span class="glyphicon glyphicons-edit"></span> Abbrechen</button>
+        </div>
+    </div>
+
+
+</div>
