@@ -149,6 +149,8 @@ function ldapOnMessage( topicHostName, topicGroup, topicCommand, payload ){
 
     if( topicCommand == "groupAdded" ){
         messageSuccess( "Group added: " + payload );
+        sidePanelMinimize();
+        ldapGroupListRequest();
         return;
     }
 
@@ -567,13 +569,17 @@ function ldapUserGroupListAppend( groupName ){
     var ldapGroupMemberTable = document.getElementById( "ldapGroupMemberTable" );
     var ldapGroupMemberValues = ldapGroupMemberTable.tBodies[0];
 
+// uid
+    var ldapUserUID = document.getElementById( "ldapUserUID" );
+
 // create new ro
 	var newRow = document.createElement('tr');
     newRow.innerHTML = " \
     <td>"+groupName+"</td> \
     <td> \
-        <div class='btn-group'> \
-            <button type='button' class='btn btn-warning' onclick=''> \
+        <div class='btn-group' > \
+            <button type='button' class='btn btn-warning' \
+            onclick='ldapUserGroupMemberRemove(\""+groupName+"\",\""+ldapUserUID.value+"\")'> \
             <span class='glyphicon glyphicon-trash'></span></button> \
         </div> \
     </td>";
@@ -589,6 +595,19 @@ function ldapUserGroupMemberAdd( groupName, uid ){
 
 // add user to group
     jsonObject['action'] = 4;
+    jsonObject['name'] = groupName;
+    jsonObject['member'] = uid;
+
+    wsSendMessage( null, copilot.selectedNodeName, "ldap", "groupMod", JSON.stringify(jsonObject) );
+}
+
+function ldapUserGroupMemberRemove( groupName, uid ){
+
+// build json-object
+    var jsonObject = {};
+
+// add user to group
+    jsonObject['action'] = 5;
     jsonObject['name'] = groupName;
     jsonObject['member'] = uid;
 

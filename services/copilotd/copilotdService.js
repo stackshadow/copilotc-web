@@ -33,7 +33,7 @@ function copliotdOnSelect(){
 
 
             // call command to get known hosts from copilotd
-                copilotdNodesRequest();
+                copilotdNodesRefresh();
 
             // get the list with not authorized keys
                 unacceptedKeysRefresh();
