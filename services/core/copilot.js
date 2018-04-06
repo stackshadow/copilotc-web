@@ -706,15 +706,46 @@ function			copliotNodeSelectionAdd( nodeName ){
 }
 
 
+// ###################################### Node-Actions ######################################
+function 			copilotNodesGetRequest(){
+    wsSendMessage( null, copilot.selectedNodeName, "co", "nodesGet", "" );
+}
 
+function			copilotNodeSaveRequest( nodeName, type, hostName, hostPort ){
 
-function            copilotNodeRemove( nodeName ){
+    var server = {}
+    server['node'] = nodeName;
+    server['type'] = parseInt(type);
+    server['host'] = hostName;
+    server['port'] = parseInt(hostPort);
+
+    wsSendMessage( null, copilot.selectedNodeName, "co", "nodeSave", JSON.stringify(server) );
+
+	
+	
+}
+
+function 			copilotNodeRemoveRequest( nodeName ){
     wsSendMessage( null, copilot.selectedNodeName, "co", "nodeRemove", nodeName );
 }
+
 function            copilotPing(){
 	wsSendMessage( "pingid", "all", "co", "ping", "" );
 }
 
+
+
+
+function			bootStrapTabSetActive( htmlObject ){
+	if( htmlObject === undefined ) return;
+	
+	var children = htmlObject.parentElement.childNodes;
+	for(child in children){
+		children[child].className = "";
+	}
+	
+	htmlObject.className = "active";
+}
 
 
 /*

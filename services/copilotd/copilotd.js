@@ -80,6 +80,18 @@ function copilotdOnMessage( topicHostName, topicGroup, topicCommand, payload ){
 
 
 
+	if( topicCommand == "configSaved" ){
+		messageSuccess( "Config saved." );
+		copilotdNodesRefresh();
+		return;
+	}
+	
+	if( topicCommand == "configNotSaved" ){
+		messageAlert( "Could not save config, please check the log !" );
+		return;
+	}
+
+		
 	if( topicCommand == "version" ){
 		copliotdNodesTableSetVersion( topicHostName, payload );
 	}
@@ -166,9 +178,9 @@ function copilotdPing(){
 
 
 // ###################################### Node functions ######################################
-function copilotdNodesRequest(){
+function copilotdNodesRefresh(){
     copilotdNodesTableClear();
-    wsSendMessage( null, copilot.selectedNodeName, "co", "nodesGet", "" );
+    copilotNodesGetRequest();
 }
 
 
@@ -235,7 +247,7 @@ function copilotdNodesTableAppend( nodename, hostname, port, typ ){
         <button type='button' class='btn btn-primary' onclick=\"copliotNodeSelect('"+nodename+"')\"> \
             <span class=\"glyphicon glyphicon-play-circle\"></span> \
         </button> \
-        <button type='button' class='btn btn-danger' onclick=\"copilotNodeRemove('"+nodename+"')\"> \
+        <button type='button' class='btn btn-danger' onclick=\"copilotNodeRemoveRequest('"+nodename+"')\"> \
             <span class=\"glyphicon glyphicon-trash\"></span> \
         </button> \
 	</div>";
@@ -388,15 +400,11 @@ function copilotdNodeEditorSave(){
     var hostName = document.getElementById( "nodeClientAddHostName" ); hostName = hostName.value;
     var hostPort = document.getElementById( "nodeClientAddHostPort" ); hostPort = hostPort.value;
 
-    var server = {}
-    server['node'] = nodeName;
-    server['type'] = parseInt( htmlNodeType.value );
-    server['host'] = hostName;
-    server['port'] = parseInt(hostPort);
-
-    wsSendMessage( null, copilot.selectedNodeName, "co", "nodeSave", JSON.stringify(server) );
+// request node save
+	copilotNodeSaveRequest( nodeName, htmlNodeType.value, hostName, hostPort );
+	
+// clear the table
     copilotdNodesTableClear();
-
 }
 
 
