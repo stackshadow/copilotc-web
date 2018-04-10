@@ -482,6 +482,7 @@ function ldapUserSaveRequest(){
         jsonObject['pw'] = ldapUserPassword.value;
     } else {
         jsonObject['action'] = 2;
+        jsonObject['uid'] = ldapUserUID.value;
         jsonObject['name'] = ldapUserUID.value;
         jsonObject['mail'] = ldapUserMail.value;
         jsonObject['pw'] = ldapUserPassword.value;
