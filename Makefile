@@ -133,10 +133,24 @@ nginx-conf: /etc/nginx/nginx-copilotc.conf
 /etc/nginx/nginx-copilotc.conf: nginx.conf
 	@cp -v $< $@
 
-install-nginx: nginx-service nginx-conf
+install-nginx: webfiles nginx-service nginx-conf
+
+
+webfiles: /var/www/copilotc-web/index.html
+/var/www/copilotc-web/index.html:
 	@mkdir -p /var/www/copilotc-web
 	@cp -Rv css /var/www/copilotc-web/
 	@cp -Rv libs /var/www/copilotc-web/
 	@cp -Rv services /var/www/copilotc-web/
 	@cp -v index.html /var/www/copilotc-web/
+
+webservice: $(prefix)/lib/systemd/system/copilotc-python.service
+$(prefix)/lib/systemd/system/copilotc-python.service: copilotc-python.service
+	@cp -v $< $@
+	@systemctl daemon-reload
+
+install: webfiles webservice
+
+
+
 
