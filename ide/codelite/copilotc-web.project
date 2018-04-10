@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Project Name="copilotc-web" Version="10.0.0" InternalType="">
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00010001N0005Debug000000000000]]>
+    </Plugin>
+  </Plugins>
+  <VirtualDirectory Name="services">
+    <VirtualDirectory Name="eDB">
+      <File Name="../../services/eDB/eDBTagEditor.html"/>
+      <File Name="../../services/eDB/eDBItems.html"/>
+      <File Name="../../services/eDB/eDBTags.html"/>
+      <File Name="../../services/eDB/eDB.js"/>
+      <File Name="../../services/eDB/eDB.html"/>
+      <File Name="../../services/eDB/eDBService.js"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="nft">
+      <File Name="../../services/nft/nft.html"/>
+      <File Name="../../services/nft/nft.js"/>
+      <File Name="../../services/nft/nftService.js"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="copilotd">
+      <File Name="../../services/copilotd/copilotd.html"/>
+      <File Name="../../services/copilotd/copilotd.js"/>
+      <File Name="../../services/copilotd/copilotdService.js"/>
+      <File Name="../../services/copilotd/nodeEditor.html"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="sysstate">
+      <File Name="../../services/sysstate/sysstate.html"/>
+      <File Name="../../services/sysstate/sysstate.js"/>
+      <File Name="../../services/sysstate/sysstateService.js"/>
+      <File Name="../../services/sysstate/sysStateNewCmd.html"/>
+      <File Name="../../services/sysstate/sysStateCmdList.html"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="simpleldap">
+      <File Name="../../services/simpleldap/ldapConnectionDialog.html"/>
+      <File Name="../../services/simpleldap/simpleldap.html"/>
+      <File Name="../../services/simpleldap/simpleldapService.js"/>
+      <File Name="../../services/simpleldap/simpleldap.js"/>
+      <File Name="../../services/simpleldap/ldapList.html"/>
+      <File Name="../../services/simpleldap/ldapUserEdit.html"/>
+      <File Name="../../services/simpleldap/ldapGroupEdit.html"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="core">
+      <File Name="../../services/core/copilot.js"/>
+      <File Name="../../services/core/authDialog.html"/>
+      <File Name="../../services/core/authService.js"/>
+      <File Name="../../services/core/sidePanel.html"/>
+      <File Name="../../services/core/sidePanel.js"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="auth"/>
+    <VirtualDirectory Name="syslogd">
+      <File Name="../../services/syslogd/syslogdService.js"/>
+      <File Name="../../services/syslogd/syslogd.html"/>
+      <File Name="../../services/syslogd/syslogd.js"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <VirtualDirectory Name="js">
+    <VirtualDirectory Name="services">
+      <File Name="../../js/services/doDBDConnectionsService.js"/>
+      <File Name="../../js/services/doDBDTableListService.js"/>
+    </VirtualDirectory>
+    <File Name="../../js/doDBDConnection.js"/>
+    <File Name="../../js/FileSaver.min.js"/>
+    <File Name="../../js/doDBTableData.js"/>
+    <File Name="../../js/doDBTableList.js"/>
+    <File Name="../../js/connections.js"/>
+    <File Name="../../js/doDBTableListNav.js"/>
+  </VirtualDirectory>
+  <Description/>
+  <Dependencies/>
+  <VirtualDirectory Name="css">
+    <File Name="../../css/doDB.css"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="html">
+    <File Name="../../html/connectionList.html"/>
+    <File Name="../../html/sqliteDialog.html"/>
+    <File Name="../../html/doDBTableData.html"/>
+    <File Name="../../html/doDBTableData_old.html"/>
+    <File Name="../../html/doDBTableList.html"/>
+    <File Name="../../html/nav.html"/>
+    <File Name="../../html/connectionConfig.html"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="icons">
+    <File Name="../../icons/doDB.png"/>
+    <File Name="../../icons/devices.png"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="copilotc-web">
+    <File Name="../../example.txt"/>
+    <File Name="../../file.html"/>
+    <File Name="../../Makefile"/>
+    <File Name="../../mqtt-test.py"/>
+    <File Name="../../openWebSite.bash"/>
+    <File Name="../../socketio.html"/>
+    <File Name="../../testws.html"/>
+    <File Name="../../index.html"/>
+  </VirtualDirectory>
+  <Settings Type="Dynamic Library">
+    <GlobalSettings>
+      <Compiler Options="" C_Options="" Assembler="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+    <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g" C_Options="-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="" IntermediateDirectory="./Debug" Command="chromium" CommandArguments="--user-data-dir=/tmp/copilot-chromium --new-window --allow-file-access-from-files index.html" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(ProjectPath)/../../" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="yes">
+        <RebuildCommand/>
+        <CleanCommand>make clean</CleanCommand>
+        <BuildCommand>make</BuildCommand>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory>$(WorkspacePath)</WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="-O2" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="" IntermediateDirectory="./Release" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="yes">
+        <RebuildCommand/>
+        <CleanCommand>make clean</CleanCommand>
+        <BuildCommand>make</BuildCommand>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory>$(WorkspacePath)</WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+  </Settings>
+</CodeLite_Project>
