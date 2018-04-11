@@ -1,6 +1,6 @@
 
 
-all: dir-sources bootstrap bootstrap-treeview bootstrap-select dataTables
+all: dir-sources bootstrap bootstrap-treeview bootstrap-tokenfield bootstrap-select dataTables bootstrap-patternfly
 # bootstrap
 
 
@@ -18,7 +18,8 @@ dir-sources:
 jquery: ./libs/jquery/jquery-3.2.1.min.js ./libs/jquery/jquery-ui-1.12.1.min.js
 ./libs/jquery/jquery-3.2.1.min.js:
 	mkdir -p ./libs/jquery
-	cd libs/jquery && wget -c https://code.jquery.com/jquery-3.2.1.min.js
+	curl -L 'https://code.jquery.com/jquery-3.2.1.min.js' \
+	-o $@
 
 ./libs/jquery/jquery-ui-1.12.1.min.js:
 	curl -L 'https://code.jquery.com/ui/1.12.1/jquery-ui.min.js' \
@@ -46,12 +47,24 @@ bootstrap-treeview: ./libs/bootstrap/js/bootstrap-treeview.min.js ./libs/bootstr
 	-o $@
 
 
+##################################### bootstrap-tokenfielt #####################################
+bootstrap-tokenfield: ./libs/bootstrap-tokenfield/js/bootstrap-tokenfield.js
+./libs/sources/bootstrap-tokenfield-0.12.0.tar.gz:
+	curl -L 'https://github.com/sliptree/bootstrap-tokenfield/archive/v0.12.0.tar.gz' \
+	-o $@
+
+./libs/bootstrap-tokenfield-0.12.0/js/bootstrap-tokenfield.js: ./libs/sources/bootstrap-tokenfield-0.12.0.tar.gz
+	tar -C ./libs -xaf ./libs/sources/bootstrap-tokenfield-0.12.0.tar.gz
+./libs/bootstrap-tokenfield/js/bootstrap-tokenfield.js: ./libs/bootstrap-tokenfield-0.12.0/js/bootstrap-tokenfield.js
+	ln -fs bootstrap-tokenfield-0.12.0 ./libs/bootstrap-tokenfield
+
+
 ##################################### bootstrap-select #####################################
 bootstrap-select: ./libs/bootstrap-select/js/bootstrap-select.min.js
 ./libs/sources/bootstrap-select-1.13.0-beta.zip:
 	curl -L 'https://github.com/snapappointments/bootstrap-select/releases/download/v1.13.0-beta/bootstrap-select-1.13.0-beta.zip' \
 	-o $@
-./libs/bootstrap-select-1.13.0-beta/js/bootstrap-select.min.js:
+./libs/bootstrap-select-1.13.0-beta/js/bootstrap-select.min.js: ./libs/sources/bootstrap-select-1.13.0-beta.zip
 	cd libs && unzip -o ./sources/bootstrap-select-1.13.0-beta.zip
 ./libs/bootstrap-select/js/bootstrap-select.min.js: ./libs/bootstrap-select-1.13.0-beta/js/bootstrap-select.min.js
 	ln -fs ./bootstrap-select-1.13.0-beta ./libs/bootstrap-select
@@ -90,36 +103,24 @@ dataTables: ./libs/dataTables/css/jquery.dataTables.min.css ./libs/dataTables/js
 	curl -L 'https://raw.githubusercontent.com/c3js/c3/master/c3.min.js' -o $@
 
 
+
 ##################################### Notify #####################################
 
 ./libs/notify.min.js:
 	curl -L 'https://raw.githubusercontent.com/mouse0270/bootstrap-notify/master/bootstrap-notify.min.js' \
 	-o $@
 
-#./libs/bootstrap/js/bootstrap.min.js: ./libs/bootstrap-4.0.0-alpha.6-dist/js/bootstrap.min.js
-#	cd libs && ln -fs bootstrap-4.0.0-alpha.6-dist bootstrap
-
-#./libs/bootstrap-4.0.0-alpha.6-dist/js/bootstrap.min.js: ./libs/bootstrap-4.0.0-alpha.6-dist.zip
-#	cd libs && unzip -o bootstrap-4.0.0-alpha.6-dist.zip
-
-#./libs/bootstrap-4.0.0-alpha.6-dist.zip:
-#	cd libs && wget -c \
-#	https://github.com/twbs/bootstrap/releases/download/v4.0.0-alpha.6/bootstrap-4.0.0-alpha.6-dist.zip
 
 
-##################################### tokenfield #####################################
-./libs/bootstrap-tokenfield.js: ./libs/bootstrap-tokenfield.css
-	curl -L 'https://raw.githubusercontent.com/sliptree/bootstrap-tokenfield/v0.12.1/dist/bootstrap-tokenfield.min.js' \
+##################################### patternfly #####################################
+bootstrap-patternfly: ./libs/patternfly/dist/js/patternfly.min.js
+./libs/sources/patternfly-v3.44.0.tar.gz:
+	curl -L 'https://github.com/patternfly/patternfly/archive/v3.44.0.tar.gz' \
 	-o $@
-
-./libs/bootstrap-tokenfield.css:
-	curl -L 'https://raw.githubusercontent.com/sliptree/bootstrap-tokenfield/master/dist/css/bootstrap-tokenfield.min.css' \
-	-o $@
-
-
-
-
-
+./libs/patternfly-3.44.0/dist/js/patternfly.min.js: ./libs/sources/patternfly-v3.44.0.tar.gz
+	tar -C ./libs -xaf $<
+./libs/patternfly/dist/js/patternfly.min.js: ./libs/patternfly-3.44.0/dist/js/patternfly.min.js
+	ln -fs patternfly-3.44.0 ./libs/patternfly
 
 ##################################### install #####################################
 webfiles = $(shell pkg-config --libs libsodium)
@@ -139,7 +140,6 @@ install-nginx: webfiles nginx-service nginx-conf
 webfiles: /var/www/copilotc-web/index.html
 /var/www/copilotc-web/index.html:
 	@mkdir -p /var/www/copilotc-web
-	@cp -Rv css /var/www/copilotc-web/
 	@cp -Rv libs /var/www/copilotc-web/
 	@cp -Rv services /var/www/copilotc-web/
 	@cp -v index.html /var/www/copilotc-web/
