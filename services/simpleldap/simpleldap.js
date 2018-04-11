@@ -84,9 +84,33 @@ function ldapOnMessage( topicHostName, topicGroup, topicCommand, payload ){
 
     // iterate groups
         var jsonPayload = JSON.parse(payload);
-        for( groupdn in jsonPayload ){
-            var jsonGroup = jsonPayload[groupdn];
-            ldapUserGroupListAppend( jsonGroup.cn );
+        for( userdn in jsonPayload ){
+            var jsonUser = jsonPayload[userdn];
+			var jsonMemberOfArray = jsonUser.memberOf;
+			
+		// if Array
+			if( Array.isArray(jsonMemberOfArray) == true ){
+				for( jsonMemberOfIndex in jsonMemberOfArray ){
+					jsonMemberDN = jsonMemberOfArray[jsonMemberOfIndex];
+					jsonMemberAttrArray = jsonMemberDN.split(",");
+					for( jsonMemberAttrIndex in jsonMemberAttrArray ){
+						jsonMemberAttr = jsonMemberAttrArray[jsonMemberAttrIndex];
+						if( jsonMemberAttr.startsWith("cn=") == true ){
+							ldapUserGroupListAppend( jsonMemberAttr.substr(3) );
+						}
+					}
+				}
+			} else {
+					jsonMemberAttrArray = jsonMemberOfArray.split(",");
+					for( jsonMemberAttrIndex in jsonMemberAttrArray ){
+						jsonMemberAttr = jsonMemberAttrArray[jsonMemberAttrIndex];
+						if( jsonMemberAttr.startsWith("cn=") == true ){
+							ldapUserGroupListAppend( jsonMemberAttr.substr(3) );
+						}
+					}
+			}
+			
+            //ldapUserGroupListAppend( jsonGroup.cn );
         }
 
         return;
