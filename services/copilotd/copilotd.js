@@ -80,6 +80,23 @@ function copilotdOnMessage( topicHostName, topicGroup, topicCommand, payload ){
 
 
 
+    if( topicCommand == "started" ){
+        messageSuccess( "Communication started." );
+        return;
+    }
+
+    if( topicCommand == "stoped" ){
+        messageSuccess( "Communication stopped." );
+        return;
+    }
+
+    if( topicCommand == "restarted" ){
+        messageSuccess( "Communication restarted." );
+        return;
+    }
+
+
+
 	if( topicCommand == "configSaved" ){
 		messageSuccess( "Config saved." );
 		copilotdNodesRefresh();
@@ -178,6 +195,7 @@ function copilotdPing(){
 
 
 // ###################################### Node functions ######################################
+
 function copilotdNodesRefresh(){
     copilotdNodesTableClear();
     copilotNodesGetRequest();
@@ -189,8 +207,27 @@ function copilotdNodeVersionRequest( nodeName ){
 }
 
 
+function copilotdCommStartRequest(){
+	wsSendMessage( null, copilot.selectedNodeName, "cocom", "start", "" );
+
+}
+
+
+function copilotdCommStopRequest(){
+	wsSendMessage( null, copilot.selectedNodeName, "cocom", "stop", "" );
+
+}
+
+
+function copilotdCommRestartRequest(){
+	wsSendMessage( null, copilot.selectedNodeName, "cocom", "restart", "" );
+}
+
+
+
 
 // ###################################### Host Table ######################################
+
 function copilotdNodesTableClear(){
 // get table
     var nodeTable = document.getElementById( "nodeTable" );

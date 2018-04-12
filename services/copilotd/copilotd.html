@@ -5,22 +5,16 @@
 
 
 
-    <h2>Nodes
-		<div class='btn-group'>
-            <button type='button' class='btn btn-primary' onclick="copilotdNodesRefresh()">
-                <span class="glyphicon glyphicon-refresh"></span>
-            </button>
-			<button type='button' class='btn btn-primary' onclick="copilotdPing()">Ping</button>
-            <button type='button' class='btn btn-primary' onclick="copilotdNodeNew()">Add</button>
-		</div>
-	</h2>
+    <h2>Nodes</h2>
+	<div class='btn-group'>
+		<button type='button' class='btn btn-primary' onclick="copilotdNodesRefresh()">
+			<span class="glyphicon glyphicon-refresh"></span>
+		</button>
+		<button type='button' class='btn btn-primary' onclick="copilotdPing()">Ping</button>
+		<button type='button' class='btn btn-primary' onclick="copilotdNodeNew()">Add</button>
 
-
-
-
-
-
-
+	</div>
+	
 
 <!-- Table of nodes  -->
     <table id="nodeTable" class="table table-striped" >
@@ -43,7 +37,19 @@
     </table>
 
 
-
+	<h2>Connection Threads</h2>
+	<div class='btn-group'>
+		<button type='button' class='btn btn-primary' onclick="copilotdCommStartRequest()">
+			<span class="glyphicon glyphicon-play"></span>
+		</button>
+		<button type='button' class='btn btn-primary' onclick="copilotdCommStopRequest()">
+			<span class="glyphicon glyphicon-stop"></span>
+		</button>
+		<button type='button' class='btn btn-primary' onclick="copilotdCommRestartRequest()">
+			<span class="glyphicon glyphicon-repeat"></span>
+		</button>
+	</div>
+	
 
 
     <h1>Keys
