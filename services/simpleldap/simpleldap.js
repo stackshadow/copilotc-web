@@ -82,35 +82,14 @@ function ldapOnMessage( topicHostName, topicGroup, topicCommand, payload ){
 
     if( topicCommand == "userMembers" ){
 
+    // clean list of groups
+        ldapUserGroupListClean();
+
     // iterate groups
         var jsonPayload = JSON.parse(payload);
         for( userdn in jsonPayload ){
-            var jsonUser = jsonPayload[userdn];
-			var jsonMemberOfArray = jsonUser.memberOf;
-			
-		// if Array
-			if( Array.isArray(jsonMemberOfArray) == true ){
-				for( jsonMemberOfIndex in jsonMemberOfArray ){
-					jsonMemberDN = jsonMemberOfArray[jsonMemberOfIndex];
-					jsonMemberAttrArray = jsonMemberDN.split(",");
-					for( jsonMemberAttrIndex in jsonMemberAttrArray ){
-						jsonMemberAttr = jsonMemberAttrArray[jsonMemberAttrIndex];
-						if( jsonMemberAttr.startsWith("cn=") == true ){
-							ldapUserGroupListAppend( jsonMemberAttr.substr(3) );
-						}
-					}
-				}
-			} else {
-					jsonMemberAttrArray = jsonMemberOfArray.split(",");
-					for( jsonMemberAttrIndex in jsonMemberAttrArray ){
-						jsonMemberAttr = jsonMemberAttrArray[jsonMemberAttrIndex];
-						if( jsonMemberAttr.startsWith("cn=") == true ){
-							ldapUserGroupListAppend( jsonMemberAttr.substr(3) );
-						}
-					}
-			}
-			
-            //ldapUserGroupListAppend( jsonGroup.cn );
+            var jsonGroup = jsonPayload[userdn];
+            ldapUserGroupListAppend( jsonGroup.cn );
         }
 
         return;
@@ -534,7 +513,6 @@ function ldapUserGetRequest( uid ){
 }
 
 function ldapUserMembershipRequest( uid ){
-    ldapUserGroupListClean();
     wsSendMessage( null, copilot.selectedNodeName, "ldap", "userMembersGet", uid );
 }
 
