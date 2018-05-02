@@ -1,11 +1,10 @@
 
 
-all: dir-sources bootstrap bootstrap-treeview bootstrap-tokenfield bootstrap-select dataTables bootstrap-patternfly
+all: dir-sources bootstrap bootstrap-treeview bootstrap-tokenfield bootstrap-select dataTables bootstrap-patternfly d3 c3
 # bootstrap
 
 
-c3: ./libs/c3/c3.min.js
-d3: ./libs/d3/d3.min.js
+
 notify: ./libs/notify.min.js
 tokenfield: ./libs/bootstrap-tokenfield.js
 
@@ -73,7 +72,7 @@ bootstrap-select: ./libs/bootstrap-select/js/bootstrap-select.min.js
 
 ##################################### dataTAbles #####################################
 
-dataTables: ./libs/dataTables/css/jquery.dataTables.min.css ./libs/dataTables/js/jquery.dataTables.min.js
+dataTables: ./libs/dataTables/css/jquery.dataTables.min.css ./libs/dataTables/js/jquery.dataTables.min.js ./libs/dataTables/images/favicon.ico
 ./libs/dataTables/css/jquery.dataTables.min.css:
 	mkdir -p ./libs/dataTables/css
 	curl -L 'https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css' \
@@ -82,19 +81,28 @@ dataTables: ./libs/dataTables/css/jquery.dataTables.min.css ./libs/dataTables/js
 	mkdir -p ./libs/dataTables/js
 	curl -L 'https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js' \
 	-o $@
+./libs/dataTables/images/favicon.ico:
+	mkdir -p ./libs/dataTables/images
+	curl -L 'https://github.com/DataTables/DataTables/raw/1.10.16/media/images/Sorting icons.ico' 		-o './libs/dataTables/images/Sorting icons.ico'
+	curl -L 'https://github.com/DataTables/DataTables/raw/1.10.16/media/images/sort_asc.png' 			-o './libs/dataTables/images/sort_asc.png'
+	curl -L 'https://github.com/DataTables/DataTables/raw/1.10.16/media/images/sort_asc_disabled.png' 	-o './libs/dataTables/images/sort_asc_disabled.png'
+	curl -L 'https://github.com/DataTables/DataTables/raw/1.10.16/media/images/sort_both.png' 			-o './libs/dataTables/images/sort_both.png'
+	curl -L 'https://github.com/DataTables/DataTables/raw/1.10.16/media/images/sort_desc.png' 			-o './libs/dataTables/images/sort_desc.png'
+	curl -L 'https://github.com/DataTables/DataTables/raw/1.10.16/media/images/sort_desc_disabled.png' 	-o './libs/dataTables/images/sort_desc_disabled.png'
+	curl -L 'https://github.com/DataTables/DataTables/raw/1.10.16/media/images/favicon.ico'       		-o './libs/dataTables/images/favicon.ico'
 
 
 
 
 
 ##################################### D3 / C3 #####################################
+d3: ./libs/d3/d3.min.js
+./libs/d3:
+	mkdir -p $@
+./libs/d3/d3.min.js: ./libs/d3
+	curl -L 'https://d3js.org/d3.v5.min.js' -o $@
 
-./libs/d3-v3.5.17.zip:
-	curl -L 'https://github.com/d3/d3/releases/download/v3.5.17/d3.zip' -o $@
-./libs/d3/d3.min.js:
-	mkdir -p ./libs/d3
-	unzip ./libs/d3-v3.5.17.zip -d ./libs/d3
-
+c3: ./libs/c3/c3.min.js
 ./libs/c3:
 	mkdir -p ./libs/c3
 ./libs/c3/c3.min.css: ./libs/c3
@@ -148,6 +156,9 @@ webservice: $(prefix)/lib/systemd/system/copilotc-python.service
 $(prefix)/lib/systemd/system/copilotc-python.service: copilotc-python.service
 	@cp -v $< $@
 	@systemctl daemon-reload
+
+test:
+	/usr/bin/python3 -m http.server 8000
 
 install: webfiles webservice
 
