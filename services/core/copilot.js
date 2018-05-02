@@ -336,7 +336,7 @@ function            wsConnect(){
     // Let us open a web socket
         copilot.wsConnected = false;
         //copilot.ws = new WebSocket("ws://[::]:3000", "copilot" );
-        copilot.ws = new WebSocket("ws://127.0.0.1:3000", "copilot" );
+        copilot.ws = new WebSocket("ws://localhost:3000", "copilot" );
         console.log( copilot.ws );
         copilot.ws.onopen = wsOnOpen
         copilot.ws.onmessage = wsOnMessage
@@ -721,8 +721,8 @@ function			copilotNodeSaveRequest( nodeName, type, hostName, hostPort ){
 
     wsSendMessage( null, copilot.selectedNodeName, "co", "nodeSave", JSON.stringify(server) );
 
-	
-	
+
+
 }
 
 function 			copilotNodeRemoveRequest( nodeName ){
@@ -738,12 +738,12 @@ function            copilotPing(){
 
 function			bootStrapTabSetActive( htmlObject ){
 	if( htmlObject === undefined ) return;
-	
+
 	var children = htmlObject.parentElement.childNodes;
 	for(child in children){
 		children[child].className = "";
 	}
-	
+
 	htmlObject.className = "active";
 }
 
