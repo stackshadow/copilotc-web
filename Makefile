@@ -1,11 +1,8 @@
 
 
-all: dir-sources bootstrap bootstrap-treeview bootstrap-tokenfield bootstrap-select dataTables bootstrap-patternfly d3 c3
+all: dir-sources bootstrap bootstrap-treeview bootstrap-tokenfield bootstrap-select dataTables bootstrap-patternfly d3 c3 notify
 # bootstrap
 
-
-
-notify: ./libs/notify.min.js
 tokenfield: ./libs/bootstrap-tokenfield.js
 
 ##################################### helper #####################################
@@ -26,14 +23,24 @@ jquery: ./libs/jquery/jquery-3.2.1.min.js ./libs/jquery/jquery-ui-1.12.1.min.js
 
 
 ##################################### Bootstrap #####################################
-bootstrap: jquery ./libs/bootstrap/js/bootstrap.min.js
-./libs/sources/bootstrap-3.3.7-dist.zip:
-	curl -L 'https://github.com/twbs/bootstrap/releases/download/v3.3.7/bootstrap-3.3.7-dist.zip' \
+bootstrap: jquery ./libs/bootstrap/js/bootstrap.min.js ./libs/bootstrap/css/ionicons.min.css
+./libs/bootstrap/css/bootstrap.min.css:
+	mkdir -p ./libs/bootstrap/css
+	curl -L 'https://raw.githubusercontent.com/twbs/bootstrap/v4.1.1/dist/css/bootstrap.min.css' \
 	-o $@
-./libs/bootstrap-3.3.7-dist/js/bootstrap.js: ./libs/sources/bootstrap-3.3.7-dist.zip
-	cd libs && unzip -o ./sources/bootstrap-3.3.7-dist.zip
-./libs/bootstrap/js/bootstrap.min.js: ./libs/bootstrap-3.3.7-dist/js/bootstrap.js
-	cd libs && ln -fs bootstrap-3.3.7-dist bootstrap
+./libs/bootstrap/js/bootstrap.min.js: ./libs/bootstrap/css/bootstrap.min.css
+	mkdir -p ./libs/bootstrap/js
+	curl -L 'https://raw.githubusercontent.com/twbs/bootstrap/v4.1.1/dist/js/bootstrap.min.js' \
+	-o $@
+./libs/bootstrap/css/ionicons.min.css:
+	curl -L 'https://github.com/ionic-team/ionicons/raw/master/css/ionicons.min.css' -o ./libs/bootstrap/css/ionicons.min.css
+	mkdir -p ./libs/bootstrap/fonts
+	curl -L 'https://github.com/ionic-team/ionicons/raw/master/fonts/ionicons.eot' -o ./libs/bootstrap/fonts/ionicons.eot
+	curl -L 'https://github.com/ionic-team/ionicons/raw/master/fonts/ionicons.svg' -o ./libs/bootstrap/fonts/ionicons.svg
+	curl -L 'https://github.com/ionic-team/ionicons/raw/master/fonts/ionicons.ttf' -o ./libs/bootstrap/fonts/ionicons.ttf
+	curl -L 'https://github.com/ionic-team/ionicons/raw/master/fonts/ionicons.woff' -o ./libs/bootstrap/fonts/ionicons.woff
+
+
 
 
 ##################################### bootstrap-treeview #####################################
@@ -57,9 +64,14 @@ bootstrap-tokenfield: ./libs/bootstrap-tokenfield/js/bootstrap-tokenfield.js
 ./libs/bootstrap-tokenfield/js/bootstrap-tokenfield.js: ./libs/bootstrap-tokenfield-0.12.0/js/bootstrap-tokenfield.js
 	ln -fs bootstrap-tokenfield-0.12.0 ./libs/bootstrap-tokenfield
 
+##################################### popper #####################################
+popper: ./libs/popper.min.js
+./libs/popper.min.js:
+	curl -L 'https://unpkg.com/popper.js/dist/umd/popper.min.js' \
+	-o $@
 
 ##################################### bootstrap-select #####################################
-bootstrap-select: ./libs/bootstrap-select/js/bootstrap-select.min.js
+bootstrap-select: ./libs/bootstrap-select/js/bootstrap-select.min.js popper
 ./libs/sources/bootstrap-select-1.13.0-beta.zip:
 	curl -L 'https://github.com/snapappointments/bootstrap-select/releases/download/v1.13.0-beta/bootstrap-select-1.13.0-beta.zip' \
 	-o $@
@@ -113,6 +125,10 @@ c3: ./libs/c3/c3.min.js
 
 
 ##################################### Notify #####################################
+notify: ./libs/notify.js
+./libs/notify.js:
+	curl -L 'https://raw.githubusercontent.com/jpillora/notifyjs/master/dist/notify.js' \
+	-o $@
 
 ./libs/notify.min.js:
 	curl -L 'https://raw.githubusercontent.com/mouse0270/bootstrap-notify/master/bootstrap-notify.min.js' \
