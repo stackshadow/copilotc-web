@@ -1,0 +1,25 @@
+<div class="animated fadeIn">
+
+
+
+
+    <div class="col-sm-6 col-lg-3">
+        <div class="card text-white bg-info" ng-controller="wsConnectionCtrl">
+            
+            <div class="card-body pb-0" style="margin-bottom: 20px;">
+                <h4>Websocket</h4>
+                <span class="badge {{stateStyle}}" >{{stateDisplayName}}</span>
+            </div>
+            
+            <div class="chart-wrapper px-3" style="height:90px;" >
+                <h6>Nodename: {{myNodeName}}</h6>
+                <button type="button" class="btn {{btnConnectionToggleStyle}} btn-block" 
+                ng-click="connectionToggle()">{{btnConnectionToggleDisplayName}}</button>
+            </div>
+            
+        </div>
+    </div>
+
+
+    
+</div>

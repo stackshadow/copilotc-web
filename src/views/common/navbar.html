@@ -1,0 +1,31 @@
+<header class="app-header navbar">
+    <button class="navbar-toggler mobile-sidebar-toggler d-lg-none" type="button">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <a class="navbar-brand" ui-sref="app.main"></a>
+    
+    <ul class="nav navbar-nav d-md-down-none">
+    
+    <!-- NodeName -->
+        <div class="btn-group" role="group" style="margin-right: 10px;" ng-controller="myNodeNameCtrl">
+            <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Node: {{myNodeName}}
+            </button>
+            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                <a class="dropdown-item" href="#">Nodename</a>
+                <a class="dropdown-item" href="#">Nodename</a>
+            </div>
+        </div>
+
+    <!-- Connection State -->
+        <span class="badge {{stateStyle}}" ng-controller="wsConnectionStateCtrl">{{stateDisplayName}}</span>
+        
+        <li class="nav-item">
+            <a class="nav-link navbar-toggler sidebar-toggler" href="#">
+                <span class="navbar-toggler-icon"></span>
+            </a>
+        </li>
+
+    </ul>
+</header>
