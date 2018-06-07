@@ -77,6 +77,21 @@ function            genUUID(){
 }
 
 
+function            updateTabs( e ){
+
+    var newElementID = e.currentTarget.getAttribute('showid');
+    var newElementHTML = document.getElementById(newElementID);
+
+    var oldElementID = e.relatedTarget.getAttribute('showid');
+    var oldElementHTML = document.getElementById(oldElementID);
+
+
+// hide the old one
+    oldElementHTML.style.display = 'none'; 
+    newElementHTML.style.display = 'block'; 
+
+}
+
 
 function            getScope( ctrlName ){
     var sel = '[ng-controller="' + ctrlName + '"]';
@@ -87,3 +102,46 @@ scope.$apply(function () {
     scope.updateCustomRequest(data, type, res);
 });
 */
+
+const logitError = 0;
+const logitWarning = 1;
+const logitSuccess = 2;
+const logitInfo = 3;
+
+toastr.options = {
+  "closeButton": false,
+  "debug": false,
+  "newestOnTop": false,
+  "progressBar": false,
+  "positionClass": "toast-top-center",
+  "preventDuplicates": false,
+  "onclick": null,
+  "showDuration": "300",
+  "hideDuration": "1000",
+  "timeOut": "5000",
+  "extendedTimeOut": "1000",
+  "showEasing": "swing",
+  "hideEasing": "linear",
+  "showMethod": "fadeIn",
+  "hideMethod": "fadeOut"
+}
+
+function            logit( level, message ){
+
+    if( level == logitError ){
+        toastr["error"]( message );
+    }
+    if( level == logitWarning ){
+        toastr["warning"]( message );
+    }
+    if( level == logitSuccess ){
+        toastr["success"]( message );
+    }
+    if( level == logitInfo ){
+        toastr["info"]( message );
+    }
+    
+
+
+}
+
