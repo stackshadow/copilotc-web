@@ -199,11 +199,19 @@ var ws = new wsClientClass( '127.0.0.1', 3333 );
 // connect websocket-state to controller
 ws.on( 'onConnect', function( event ){
     
+    logit( logitSuccess, "Websocket " + _i['connected'] );
+
 // request nodeName
     ws.sendMsg( genUUID(), 'web', '', '', 'nodeNameGet', '' );
     ws.sendMsg( genUUID(), 'web', '', '', 'authMethodeGet', '' );
     
 } );
+
+ws.on( 'onDisconnect', function( event ){
+    logit( logitError, "Websocket " + _i['disconnected'] );
+} );
+
+
 ws.on( 'onJsonMessage', function( event, jsonMessage ){
     
     if( jsonMessage.c == "nodeName" ){
