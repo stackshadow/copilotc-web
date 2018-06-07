@@ -55,17 +55,19 @@ angular
                 files: ['src/css/modal-xl.css']
             }]);
         }],
-      loadPlugin: ['$ocLazyLoad', function ($ocLazyLoad) {
+        loadPlugin: ['$ocLazyLoad', function ($ocLazyLoad) {
         // you can lazy load files for an existing module
-        return $ocLazyLoad.load([{
-          serie: true,
-          name: 'chart.js',
-          files: [
-            'node_modules/chart.js/dist/Chart.min.js',
-            'node_modules/angular-chart.js/dist/angular-chart.min.js'
-          ]
-        }]);
-      }],
+        return $ocLazyLoad.load([
+            {
+                serie: true,
+                name: 'chart.js',
+                files: [
+                    'node_modules/chart.js/dist/Chart.min.js',
+                    'node_modules/angular-chart.js/dist/angular-chart.min.js'
+                ]
+            }
+        ]);
+        }],
     }
   })
   .state('copilot.copilotd', {
@@ -133,10 +135,16 @@ angular
             return $ocLazyLoad.load([
             {
                 serie: true,
-                name: 'chart.js',
+                name: 'ldap',
                 files: [
-                    'node_modules/chart.js/dist/Chart.min.js',
-                    'node_modules/angular-chart.js/dist/angular-chart.min.js'
+                    'views/pages/ldap/ldap.js'
+                ]
+            },
+            {
+                serie: true,
+                name: 'ui-grid',
+                files: [
+                    'node_modules/angular-ui-grid/ui-grid.core.min.js'
                 ]
             },
             ]);
@@ -158,8 +166,8 @@ angular
                 files: ['node_modules/font-awesome/css/font-awesome.min.css']
             },{
                 serie: true,
-                name: 'Simple Line Icons',
-                files: ['node_modules/simple-line-icons/css/simple-line-icons.css']
+                name: 'ui-grid',
+                files: ['node_modules/angular-ui-grid/ui-grid.min.css']
             }]);
         }]
         
