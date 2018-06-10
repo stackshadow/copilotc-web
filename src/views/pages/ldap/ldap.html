@@ -1,13 +1,13 @@
 
 <div ng-controller="ldapConnectionCtrl">
 
-    <!-- Modal -->
+<!-- Ldap-Connection-Setting -->
     <div class="modal fade" id="ldapConnectionSettings" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-xl" role="document">
       
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <h5 class="modal-title" id="exampleModalLabel">{{_i('Connection settings')}}</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -16,7 +16,7 @@
           
         <form>
             <div class="form-group">
-                <label for="ldapUri">LDAP-Connection-String</label>
+                <label for="ldapUri">{{_i('LDAP-Connection-String')}}</label>
                 <input id="ldapUri" type="text" class="form-control" placeholder="ldap://127.0.0.1" value="{{config.uri}}" data-ng-model="config.uri"></input>
                 <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>  -->
             </div>
@@ -24,14 +24,14 @@
             <div class="row">
                 <div class="col-sm-6 col-lg-6">
                     <div class="form-group">
-                        <label for="ldapAdminDN">Admin-DN</label>
+                        <label for="ldapAdminDN">{{_i('Admin-DN')}}</label>
                         <input id="ldapAdminDN" type="text" class="form-control" placeholder="cn=admin,cn=config" value="{{config.admindn}}" data-ng-model="config.admindn">
                         <small id="ldapAdminDNHelp" class="form-text text-muted">DN to manage ALL DB's</small>
                     </div>                
                 </div>
                 <div class="col-sm-6 col-lg-6">
                     <div class="form-group">
-                        <label for="ldapAdminPW">Admin-PW</label>
+                        <label for="ldapAdminPW">{{_i('Admin-PW')}}</label>
                         <input id="ldapAdminPW" type="password" class="form-control" placeholder="Password" value="{{config.adminpass}}" data-ng-model="config.adminpass">
                     </div>
                 </div>
@@ -41,14 +41,14 @@
             <div class="row">
                 <div class="col-sm-6 col-lg-6">
                     <div class="form-group">
-                        <label for="ldapLoginDN">Login-DN</label>
+                        <label for="ldapLoginDN">{{_i('Login-DN')}}</label>
                         <input id="ldapLoginDN" type="text" class="form-control" placeholder="cn=admin,cn=config" value="{{config.logindn}}" data-ng-model="config.logindn">
                         <small id="ldapLoginDNHelp" class="form-text text-muted">DN to manage system configs and db's</small>
                     </div>                
                 </div>
                 <div class="col-sm-6 col-lg-6">
                     <div class="form-group">
-                        <label for="ldapLoginPW">Login-PW</label>
+                        <label for="ldapLoginPW">{{_i('Login-PW')}}</label>
                         <input id="ldapLoginPW" type="password" class="form-control" placeholder="Password" value="{{config.loginpass}}" data-ng-model="config.loginpass">
                     </div>
                 </div>
@@ -58,7 +58,7 @@
             <div class="row">
                 <div class="col-sm-12 col-lg-12">
                     <div class="form-group">
-                        <label for="ldapBaseDN">Base-DN</label>
+                        <label for="ldapBaseDN">{{_i('Base-DN')}}</label>
                         <input id="ldapBaseDN" type="text" class="form-control" placeholder="cn=admin,cn=config" value="{{config.basedn}}" data-ng-model="config.basedn">
                         <small id="ldapBaseDNHelp" class="form-text text-muted">Base DN</small>
                     </div>                
@@ -69,14 +69,14 @@
             <div class="row">
                 <div class="col-sm-6 col-lg-6">
                     <div class="form-group">
-                        <label for="ldapGroupDN">Group-DN</label>
+                        <label for="ldapGroupDN">{{_i('Group-DN')}}</label>
                         <input id="ldapGroupDN" type="text" class="form-control" placeholder="ou=groups" value="{{config.groupdn}}" data-ng-model="config.groupdn">
                         <small id="ldapGroupDNHelp" class="form-text text-muted">Offset DN for groups. Result will be <span ng-bind="config.groupdn"></span>,<span ng-bind="config.basedn"></span> </small>
                     </div>                
                 </div>
                 <div class="col-sm-6 col-lg-6">
                     <div class="form-group">
-                        <label for="ldapUserDN">User-DN</label>
+                        <label for="ldapUserDN">{{_i('User-DN')}}</label>
                         <input id="ldapUserDN" type="text" class="form-control" placeholder="ou=accounts" value="{{config.userdn}}" data-ng-model="config.userdn">
                         <small id="ldapUserDNHelp" class="form-text text-muted">Offset DN for users. Result will be <span ng-bind="config.userdn"></span>,<span ng-bind="config.basedn"></span> </small>
                     </div>
@@ -90,13 +90,74 @@
           
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" ng-click="saveConConfig()">Save changes</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{_i('Close')}}</button>
+            <button type="button" class="btn btn-primary" ng-click="saveConConfig()">{{_i('Save Changes')}}</button>
           </div>
         </div>
         
       </div>
     </div>
+
+<!-- User-Setting -->
+    <div class="modal fade" id="ldapUserSettings" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl" role="document">
+      
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">{{_i('user')}}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+          
+        <form>
+            <div class="form-group">
+                <label for="ldapUserID">ID</label>
+                <input id="ldapUserID" type="text" class="form-control" placeholder="UUID" value="{{user.dn}}" data-ng-model="user.dn" disabled></input>
+                <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>  -->
+            </div>
+            
+            <div class="row">
+                <div class="col-sm-6 col-lg-6">
+                    <div class="form-group">
+                        <label for="ldapAdminDN">UID</label>
+                        <input id="ldapAdminDN" type="text" class="form-control" placeholder="testuser" value="{{user.uid}}" data-ng-model="user.uid" ng-disabled="user.change">
+                    </div>                
+                </div>
+                <div class="col-sm-6 col-lg-6">
+                    <div class="form-group">
+                        <label for="ldapAdminPW">Mail</label>
+                        <input id="ldapAdminPW" type="text" class="form-control" placeholder="benutzer@evilbrain.de" value="{{user.mail}}" data-ng-model="user.mail" ng-disabled="user.change">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-sm-12 col-lg-12">
+                    <div class="form-group">
+                        <label for="ldapUserPW">Password</label>
+                        <input id="ldapUserPW" type="password" class="form-control" placeholder="" value="{{user.pw}}" data-ng-model="user.pw" ng-disabled="user.change">
+                        <small id="ldapUserPWHelp" class="form-text text-muted">Leave passwort empty if you dont want to change it</small>
+                    </div>                
+                </div>
+            </div>
+
+        </form>
+          
+          
+          
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{_i('Close')}}</button>
+            <button type="button" class="btn btn-primary" ng-click="ldapUserSave('{{user.uid}}')" >{{_i('Save Changes')}}</button>
+            <button type="button" class="btn btn-danger" ng-click="ldapUserDeleteApply('{{user.uid}}')" ng-disabled="user.create">{{_i('Delete')}}</button>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
 
     <div class="row">
         <!-- Connect / Connections Setup -->
@@ -134,7 +195,7 @@
 
 
     <div id="ldapUserListContainer" class="col-lg-12">
-      <div id="grid1" ui-grid="gridOpts" class="grid"  class="col-lg-12"></div>
+      <div id="grid1" ui-grid="gridOpts" class="grid" style="height: 400px" ui-grid-resize-columns ui-grid-pagination class="col-lg-12"></div>
     </div>
     
     <div id="ldapGroupListContainer" class="col-lg-12">
