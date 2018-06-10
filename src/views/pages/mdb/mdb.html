@@ -1,0 +1,105 @@
+
+
+
+<div ng-controller="mdbConnectionCtl">
+
+    <!-- Connect / Connections Setup -->
+    <div class="row" >
+        <div class="btn-group" >
+            <button type="button" class="{{conButtonStyle}}" ng-click="connect()" >
+                <i class="fa fa-power-off"></i> {{conButtonDisplayName}}
+            </button>
+            <button type="button" class="btn btn-sm btn-primary" ng-click="getConConfig()">
+                <i class="fa fa-cog"></i> Setup
+            </button>
+        </div>
+    </div>
+
+    <div class="row" >
+        <div class="container col-sm-12 col-lg-12">
+            <form>
+                <div ng-repeat="item in content">
+                    <div class="row" >
+                    
+                        <div class="input-group">
+                        
+                            <div class="input-group-prepend">
+                                <span mdbEditMode class="input-group-text" style="display: none;">{{item.id}}</span>
+                                <span class="input-group-text" >{{item.displayName}}</span>
+                            </div>
+
+                            <input id="mdb_{{item.id}}" type="{{item.inputtype}}" class="form-control" 
+                            placeholder="{{item.placeholder}}" value="item.value" data-ng-model="item.value"></input>
+                            
+                            <button mdbEditMode type="button" class="btn btn-danger" itemid="{{item.id}}" onclick="getScope('mdbConnectionCtl').removeInput(this)" style="{{editStyle}}" >
+                                <i class="fa fa-trash"></i>
+                            </button>
+                            
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+        
+        
+            <div mdbEditMode style="display: none;">
+                <label>New Line</label>
+
+                <div class="row" >
+                
+                    <div class="input-group col-sm-3 col-lg-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="">Unique ID</span>
+                        </div>
+                        <input type="text" class="form-control" placeholder="displayName" value="newcontent.id" data-ng-model="newcontent.id"></input>
+                    </div>
+                    
+                    <div class="input-group col-sm-2 col-lg-2">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="">Type</span>
+                        </div>
+                        <select class="form-control" id="sel1" value="newcontent.inputtype">
+                            <option value="text">Text</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group col-sm-3 col-lg-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="">Display Name</span>
+                        </div>
+                        <input type="text" class="form-control" placeholder="Display Name" value="newcontent.displayName" data-ng-model="newcontent.displayName"></input>
+                    </div>
+
+                    <div class="input-group col-sm-3 col-lg-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="">Placeholder</span>
+                        </div>
+                        <input type="text" class="form-control" placeholder="The name to display" value="" data-ng-model="newcontent.placeholder"></input>
+                    </div>
+                    
+                    <div class="col-sm-1 col-lg-1">
+                        <button type="button" mdbEditMode class="btn btn-success" ng-click="newInput()" >
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                    
+                </div>
+
+            </div>
+        </div>
+        
+    </div>
+
+
+    <div class="row" >
+        <div class="btn-group" >
+            <button type="button" ng-click="toggleEditMode()" >
+                Showit
+            </button>
+        </div>
+    </div>
+
+
+</div>
+
+

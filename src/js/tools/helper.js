@@ -97,6 +97,15 @@ function            getScope( ctrlName ){
     var sel = '[ng-controller="' + ctrlName + '"]';
     return angular.element(sel).scope();
 }
+
+
+function            scopeCallAndApply( ctrlName, callback = function( data, type, res ){} ){
+    var controller = '[ng-controller="' + ctrlName + '"]';
+    var scope = angular.element(sel).scope();
+    if( scope === null ) return;
+    scope.$apply( callback );
+}
+
 /* call function 
 scope.$apply(function () {
     scope.updateCustomRequest(data, type, res);

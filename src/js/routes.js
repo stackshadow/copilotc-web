@@ -119,60 +119,123 @@ angular
         
     }
     })
-  .state('copilot.ldap', {
-    url: '/copilotd/ldap',
-    templateUrl: 'views/pages/ldap/ldap.html',
+    .state('copilot.ldap', {
+        url: '/copilotd/ldap',
+        templateUrl: 'views/pages/ldap/ldap.html',
     //page title goes here
-    ncyBreadcrumb: {
-      label: 'LDAP',
-    },
+        ncyBreadcrumb: {
+            label: 'LDAP',
+        },
     //page subtitle goes here
-    params: { subtitle: 'ldap' },
-    resolve: {
-        
-        loadPlugin: ['$ocLazyLoad', function ($ocLazyLoad) {
-            // you can lazy load files for an existing module
-            return $ocLazyLoad.load([
-            {
-                serie: true,
-                name: 'ldap',
-                files: [
-                    'views/pages/ldap/ldap.js'
-                ]
-            },
-            {
-                serie: true,
-                name: 'ui-grid',
-                files: [
-                    'node_modules/angular-ui-grid/ui-grid.core.min.js'
-                ]
-            },
-            ]);
-        }],
-        
-        loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
-            // you can lazy load controllers
-            return $ocLazyLoad.load({
-                files: ['js/controllers/ldapConnectionCtrl.js']
-            });
-        }],
-        
-        
-        loadCSS: ['$ocLazyLoad', function($ocLazyLoad) {
-            // you can lazy load CSS files
-            return $ocLazyLoad.load([{
-                serie: true,
-                name: 'Font Awesome',
-                files: ['node_modules/font-awesome/css/font-awesome.min.css']
-            },{
-                serie: true,
-                name: 'ui-grid',
-                files: ['node_modules/angular-ui-grid/ui-grid.min.css']
-            }]);
-        }]
-        
-    }
+        params: { subtitle: 'ldap' },
+        resolve: {
+            
+            loadPlugin: ['$ocLazyLoad', function ($ocLazyLoad) {
+                // you can lazy load files for an existing module
+                return $ocLazyLoad.load([
+                {
+                    serie: true,
+                    name: 'ldap',
+                    files: [
+                        'views/pages/ldap/ldap.js'
+                    ]
+                },
+                {
+                    serie: true,
+                    name: 'ui-grid',
+                    files: [
+                        'node_modules/angular-ui-grid/ui-grid.core.min.js',
+                        'node_modules/angular-ui-grid/ui-grid.resize-columns.min.js',
+                        'node_modules/angular-ui-grid/ui-grid.pagination.min.js'
+                    ]
+                },
+                ]);
+            }],
+            
+            loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+                // you can lazy load controllers
+                return $ocLazyLoad.load({
+                    files: ['js/controllers/ldapConnectionCtrl.js']
+                });
+            }],
+            
+            
+            loadCSS: ['$ocLazyLoad', function($ocLazyLoad) {
+                // you can lazy load CSS files
+                return $ocLazyLoad.load([
+                {
+                    serie: true,
+                    name: 'Font Awesome',
+                    files: ['node_modules/font-awesome/css/font-awesome.min.css']
+                },{
+                    serie: true,
+                    name: 'ui-grid',
+                    files: ['node_modules/angular-ui-grid/ui-grid.min.css']
+                }
+                ]);
+            }]
+        }
     })
+
+    .state('copilot.mdb', {
+        url: '/copilotd/mdb',
+        templateUrl: 'views/pages/mdb/mdb.html',
+    //page title goes here
+        ncyBreadcrumb: {
+            label: 'MongoDB',
+        },
+    //page subtitle goes here
+        params: { subtitle: 'mdb' },
+        resolve: {
+            
+            loadPlugin: ['$ocLazyLoad', function ($ocLazyLoad) {
+                // you can lazy load files for an existing module
+                return $ocLazyLoad.load([
+                {
+                    serie: true,
+                    name: 'mdb',
+                    files: [
+                        'views/pages/mdb/mdb.js',
+                    ]
+                },
+                {
+                    serie: true,
+                    name: 'ui-grid',
+                    files: [
+                        'node_modules/angular-ui-grid/ui-grid.core.min.js',
+                        'node_modules/angular-ui-grid/ui-grid.resize-columns.min.js',
+                        'node_modules/angular-ui-grid/ui-grid.pagination.min.js'
+                    ]
+                },
+                ]);
+            }],
+            
+            loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+                // you can lazy load controllers
+                return $ocLazyLoad.load({
+                    files: ['js/controllers/mdbConnectionCtrl.js' ],
+                });
+            }],
+            
+            
+            
+            loadCSS: ['$ocLazyLoad', function($ocLazyLoad) {
+                // you can lazy load CSS files
+                return $ocLazyLoad.load([
+                {
+                    serie: true,
+                    name: 'Font Awesome',
+                    files: ['node_modules/font-awesome/css/font-awesome.min.css']
+                },{
+                    serie: true,
+                    name: 'ui-grid',
+                    files: ['node_modules/angular-ui-grid/ui-grid.min.css']
+                }
+                ]);
+            }]
+        }
+    })
+
 
   // Additional Pages
   .state('appSimple.login', {
