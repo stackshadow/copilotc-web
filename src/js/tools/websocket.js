@@ -139,7 +139,12 @@ function    wsClientClass( host, port ){
         newMessage.t = nodeTarget;
         newMessage.g = group;
         newMessage.c = command;
-        newMessage.v = payload;
+        
+        if( typeof payload === "object" ){
+            newMessage.v = JSON.stringify( payload );
+        } else {
+            newMessage.v = payload;
+        }
         
         this.sendJson( newMessage );
     }
