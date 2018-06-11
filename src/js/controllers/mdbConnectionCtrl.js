@@ -1,6 +1,7 @@
 angular
 .module('app', ['ui.grid'] )
-.controller('mdbConnectionCtl', mdbConnectionCtl);
+.controller('mdbConnectionCtl', mdbConnectionCtl)
+.controller('mdbTemplateCtrl', mdbTemplateCtrl);
 
 
 
@@ -22,7 +23,7 @@ function    formText( id, title, placeholder ){
 mdbConnectionCtl.$inject = ['$scope', '$sce' ];
 function mdbConnectionCtl($scope,$sce) {
 
-    // language string
+// language string
     $scope._i = function( message ){
         if( _i[message] !== undefined ){
             return _i[message];
@@ -33,7 +34,6 @@ function mdbConnectionCtl($scope,$sce) {
     }
 
 // vars
-    var connected = false;
     $scope.conButtonDisplayName = _i['connect'];
     $scope.conButtonStyle = "btn btn-sm btn-primary";
 
@@ -49,10 +49,42 @@ function mdbConnectionCtl($scope,$sce) {
     
     }
 
+
+
+// ##################### connect / disconnect #####################
+    var connected = false;
+    
     $scope.connect = function(){
     // get connection state
-        ws.sendMsg( genUUID(), 'wsclient', myNodeName, 'mdb', 'connect', '' );
+        if( connected == false ){
+            ws.sendMsg( genUUID(), 'wsclient', myNodeName, 'mdb', 'connect', '' );
+        }
+        if( connected == true ){
+            ws.sendMsg( genUUID(), 'wsclient', myNodeName, 'mdb', 'disconnect', '' );
+        }
+
+    }
+    
+    function parseConnectionMessage( jsonMessage ){
+        
+        if( jsonMessage.c == "state" ){
             
+            if( jsonMessage.v == "connected" ){
+                connected = true;
+                logit( logitSuccess, "MongoDB " + _i['connected'] );
+                
+                
+                ws.sendMsg( genUUID(), 'wsclient', myNodeName, 'mdb', 'templatesGet', '' );
+                return;
+            }
+            if( jsonMessage.v == "disconnected" ){
+                connected = false;
+                logit( logitError, "MongoDB " + _i['disconnected'] );
+                return;
+            }
+        
+        }
+
     }
 
 
@@ -63,19 +95,9 @@ function mdbConnectionCtl($scope,$sce) {
         if( jsonMessage.g != "mdb" ) return;
         
     // connection state
-        if( jsonMessage.c == "state" ){
+        parseConnectionMessage( jsonMessage );
             
-            if( jsonMessage.v == "connected" ){
-                logit( logitSuccess, _i['connected'] );
-                return;
-            }
-            if( jsonMessage.v == "disconnected" ){
-                logit( logitError, _i['disconnected'] );
-                return;
-            }
-            
-            return;
-        }
+
         
     // error message
         if( jsonMessage.c == "error" ){
@@ -94,14 +116,31 @@ function mdbConnectionCtl($scope,$sce) {
         ws.off( 'onJsonMessage', $scope.onJsonMessage );
     });
 
+// request connection state
+    ws.sendMsg( genUUID(), 'wsclient', myNodeName, 'mdb', 'isConnected', '' );
 
 
+}
 
-// templates
-    $scope.displayName = "Test";
-    //$scope.htmlform = '<h1>{{displayName}}</h1>';
     
-    $scope.content = {
+mdbTemplateCtrl.$inject = ['$scope'];
+function mdbTemplateCtrl($scope) {
+
+// language string
+    $scope._i = function( message ){
+        if( _i[message] !== undefined ){
+            return _i[message];
+        } else {
+            console.log( "Need translation: '" + message + "'" );
+            return message;
+        }
+    }
+
+
+    $scope.id = "test";
+    $scope.displayName = "Test-Template";
+
+    $scope.formEntrys = {
         "a": {
             "id": "a",
             "inputtype": "text",
@@ -118,19 +157,23 @@ function mdbConnectionCtl($scope,$sce) {
         },
     
     };
-    
-    $scope.newcontent = {
+    $scope.newformEntry = {
         "id": "",
         "inputtype": "text",
         "displayName": "",
         "placeholder": "",
         "value": "",
     };
+
+
     
-    $scope.editStyle = "display: none;";
-    
-    
-    $scope.addInput = function( id, inputtype, displayName, placeholder ){
+    $scope.addFormElement = function( id, inputtype, displayName, placeholder ){
+        
+    // check if id is empty
+        if( id == "" ){
+            logit( logitError, "ID " + _i[' is empty'] );
+            return;
+        }
         
         var newEntry = {};
         newEntry.id = id;
@@ -139,28 +182,40 @@ function mdbConnectionCtl($scope,$sce) {
         newEntry.placeholder = placeholder;
         newEntry.value = "";
         
-        $scope.content[id] = newEntry;
+        $scope.formEntrys[id] = newEntry;
     }
 
-    $scope.newInput = function(){
-        $scope.addInput( 
-            $scope.newcontent.id,
-            $scope.newcontent.inputtype,
-            $scope.newcontent.displayName,
-            $scope.newcontent.placeholder,
+    $scope.addNewFormElement = function(){
+        $scope.addFormElement( 
+            $scope.newformEntry.id,
+            $scope.newformEntry.inputtype,
+            $scope.newformEntry.displayName,
+            $scope.newformEntry.placeholder,
         );
     }
 
     $scope.removeInput = function( htmlElement ){
         var itemid = htmlElement.getAttribute( 'itemid' );
-        delete $scope.content[ itemid ];
+        delete $scope.formEntrys[ itemid ];
         $scope.$apply();
         $( '[mdbEditMode]' ).show(); // this ensure to show the remove-button because its initial hidden
     }
 
+    $scope.saveTemplate = function(){
+        
+        var jsonTemplate = {};
+        jsonTemplate._type = "template";
+        jsonTemplate.id = $scope.id;
+        jsonTemplate.displayName = $scope.displayName;
+        jsonTemplate.formElements = $scope.formEntrys;
+        
+        ws.sendMsg( genUUID(), 'wsclient', myNodeName, 'mdb', 'templateSave', JSON.stringify(jsonTemplate) );
+    }
+
+
 
     var editMode = false;
-    $scope.toggleEditMode = function(){
+    $scope.editModeToggle = function(){
 
         if( editMode == false ){
             $( '[mdbEditMode]' ).show();
@@ -174,15 +229,35 @@ function mdbConnectionCtl($scope,$sce) {
             $scope.editStyle = "display: none;";
             editMode = false;
             
-            console.log( $scope.newcontent );
+            console.log( $scope.newformEntry );
             return;
         }
         
         
     }
     
+    
+// events
+    $scope.onJsonMessage = function( event, jsonMessage ){
+        
+    // no message for us
+        if( jsonMessage.g != "mdb" ) return;
+        
 
 
-}
+
+    }
+
+// register websocket events
+    ws.on( 'onJsonMessage', $scope.onJsonMessage );
+    
+// derigister on destroy of controller
+    $scope.$on("$destroy", function(){
+        ws.off( 'onJsonMessage', $scope.onJsonMessage );
+    });
+
 
     
+}
+
+

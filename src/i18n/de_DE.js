@@ -14,6 +14,8 @@ _i['Close'] = "Schließen";
 _i['Save Changes'] = "Änderung speichern";
 _i['Delete'] = "Löschen";
 
+_i[' is empty'] = " ist leer";
+
 // ldap
 _i['LDAP-Connection-String'] = "Einstellungen";
 _i['Admin-DN'] = "Admin-DN";
