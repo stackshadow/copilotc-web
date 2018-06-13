@@ -1,7 +1,7 @@
 //main.js
 
 angular
-.module('app', ['ui.grid'] )
+.module('app', ['ui.grid', 'isteven-multi-select' ] )
 .controller('ldapConnectionCtrl', ldapConnectionCtrl);
 
 
@@ -14,8 +14,7 @@ function ldapConnectionCtrl($scope,uiGridConstants) {
     $scope.conButtonDisplayName = _i['connect'];
     $scope.conButtonStyle = "btn btn-sm btn-primary";
     $scope.user = {};
-    $scope.user.change = false;
-    $scope.user.create = false;
+    $scope.change = false;
 
 // language string
     $scope._i = function( message ){
@@ -39,11 +38,10 @@ function ldapConnectionCtrl($scope,uiGridConstants) {
         paginationPageSizes: [7, 25, 50, 100],
         paginationPageSize: 7,
         enableFiltering: true,
-        appScopeProvider: this,
         columnDefs: [
             { name: 'actions', width: 100, enableFiltering: false, cellTemplate: ' \
             <div class="btn-group"> \
-                <button type="button" class="btn btn-success" uid="{{row.entity.uid}}"  onclick="getScope(\'ldapConnectionCtrl\').ldapUserEdit(this)"  > \
+                <button type="button" class="btn btn-success" uid="{{row.entity.uid}}" ng-click="grid.appScope.ldapUserEdit(row.entity.uid)"  > \
                     <i class="fa fa-pencil" aria-hidden="true"></i> \
                 </button> \
             </div> \
@@ -129,8 +127,9 @@ function ldapConnectionCtrl($scope,uiGridConstants) {
     }
 
     $scope.ldapUserAdd = function(){
-        $scope.user.create = true;
-        $scope.user.change = false;
+        $scope.change = false;
+        $( "#ldapUserEditUID" ).prop( "disabled", false );
+        $scope.user = {};
         
         $('#ldapUserSettings')
         .modal({
@@ -141,26 +140,23 @@ function ldapConnectionCtrl($scope,uiGridConstants) {
     }
     
     $scope.ldapUserEdit = function( htmlElement ){
-        $scope.user.create = false;
-        $scope.user.change = true;
+        $scope.change = true;
+        $( "#ldapUserEditUID" ).prop( "disabled", true );
+        
+    // remember selected user before change
+        $scope.userBeforeChange = $scope.user;
 
     // get
-        var uid = htmlElement.getAttribute( 'uid' );
+        //var uid = htmlElement.getAttribute( 'uid' );
+        var uid = htmlElement;
         ws.sendMsg( genUUID(), 'wsclient', myNodeName, 'ldap', 'userGet', uid );
         
-        $('#ldapUserSettings')
-        .modal({
-            keyboard: false 
-        })
-        .on('show.bs.modal', function (event) {
-            
-        })
+        $('#ldapUserSettings').modal('show');
         
     }
 
     $scope.ldapUserDelete = function(){
-        $scope.user.create = false;
-        $scope.user.change = false;
+        $( "#ldapUserEditUID" ).prop( "disabled", true );
         
         $('#ldapUserSettings').modal();
     }
@@ -178,7 +174,7 @@ function ldapConnectionCtrl($scope,uiGridConstants) {
 
     $scope.ldapUserSave = function( uid ){
         
-        if(  $scope.user.create == true ){
+        if(  $scope.change == false ){
             var newUser = {};
             newUser.action = 1;
             newUser.uid = $scope.user.uid;
@@ -188,18 +184,40 @@ function ldapConnectionCtrl($scope,uiGridConstants) {
             ws.sendMsg( genUUID(), 'wsclient', myNodeName, 'ldap', 'userMod', newUser );
         }
         
-        if(  $scope.user.change == true ){
+        if(  $scope.change == true ){
             var newUser = {};
             newUser.action = 2;
             newUser.uid = $scope.user.uid;
-            newUser.mail = $scope.user.mail;
-            newUser.pw = $scope.user.pw;
             
+        // check if mail has changed
+            if( $scope.user.mail != $scope.userBeforeChange.mail ){
+                newUser.mail = $scope.user.mail;
+            }
+            
+        // check if pw has changed
+            if( $scope.user.pw != "" ){
+                newUser.pw = $scope.user.pw;
+            }
+            
+        // send changes out
             ws.sendMsg( genUUID(), 'wsclient', myNodeName, 'ldap', 'userMod', newUser );
         }
         
         $('#ldapUserSettings').modal('hide');
     }
+
+
+// ################### User Groups ###################
+
+
+    $scope.userGroups = [
+        { name: "Opera",              maker: "(Opera Software)",        ticked: true  },
+        { name: "Internet Explorer",  maker: "(Microsoft)",             ticked: false },
+        { name: "Firefox",            maker: "(Mozilla Foundation)",    ticked: true  },
+        { name: "Safari",             maker: "(Apple)",                 ticked: false },
+        { name: "Chrome",             maker: "(Google)",                ticked: true  }
+    ]; 
+
 
 
 // events
