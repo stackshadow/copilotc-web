@@ -113,22 +113,22 @@
           
         <form>
             <div class="form-group">
-                <label for="ldapUserID">ID</label>
-                <input id="ldapUserID" type="text" class="form-control" placeholder="UUID" value="{{user.dn}}" data-ng-model="user.dn" disabled></input>
+                <label for="ldapUserEditDN">ID</label>
+                <input id="ldapUserEditDN" type="text" class="form-control" placeholder="UUID" value="{{user.dn}}" data-ng-model="user.dn" disabled ldapUserEditElement></input>
                 <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>  -->
             </div>
             
             <div class="row">
                 <div class="col-sm-6 col-lg-6">
                     <div class="form-group">
-                        <label for="ldapAdminDN">UID</label>
-                        <input id="ldapAdminDN" type="text" class="form-control" placeholder="testuser" value="{{user.uid}}" data-ng-model="user.uid" ng-disabled="user.change">
+                        <label for="ldapUserEditUID">UID</label>
+                        <input id="ldapUserEditUID" type="text" class="form-control" placeholder="testuser" value="{{user.uid}}" data-ng-model="user.uid">
                     </div>                
                 </div>
                 <div class="col-sm-6 col-lg-6">
                     <div class="form-group">
-                        <label for="ldapAdminPW">Mail</label>
-                        <input id="ldapAdminPW" type="text" class="form-control" placeholder="benutzer@evilbrain.de" value="{{user.mail}}" data-ng-model="user.mail" ng-disabled="user.change">
+                        <label for="ldapUserEditMail">Mail</label>
+                        <input id="ldapUserEditMail" type="text" class="form-control" placeholder="benutzer@evilbrain.de" value="{{user.mail}}" data-ng-model="user.mail">
                     </div>
                 </div>
             </div>
@@ -136,10 +136,22 @@
             <div class="row">
                 <div class="col-sm-12 col-lg-12">
                     <div class="form-group">
-                        <label for="ldapUserPW">Password</label>
-                        <input id="ldapUserPW" type="password" class="form-control" placeholder="" value="{{user.pw}}" data-ng-model="user.pw" ng-disabled="user.change">
-                        <small id="ldapUserPWHelp" class="form-text text-muted">Leave passwort empty if you dont want to change it</small>
+                        <label for="ldapUserEditPW">Password</label>
+                        <input id="ldapUserEditPW" type="password" class="form-control" placeholder="" value="{{user.pw}}" data-ng-model="user.pw" ng-disabled="user.change">
+                        <small id="ldapUserEditPWHelp" class="form-text text-muted">Leave passwort empty if you dont want to change it</small>
                     </div>                
+                </div>
+            </div>
+
+            <div class="row">
+                <div     
+                    isteven-multi-select
+                    input-model="userGroups"
+                    output-model="outputBrowsers"
+                    button-label="name"
+                    item-label="name maker"
+                    tick-property="ticked"
+                >
                 </div>
             </div>
 
@@ -195,7 +207,7 @@
 
 
     <div id="ldapUserListContainer" class="col-lg-12">
-      <div id="grid1" ui-grid="gridOpts" class="grid" style="height: 400px" ui-grid-resize-columns ui-grid-pagination class="col-lg-12"></div>
+      <div id="gridUsers" ui-grid="gridOpts" class="grid" style="height: 400px" ui-grid-resize-columns ui-grid-pagination class="col-lg-12"></div>
     </div>
     
     <div id="ldapGroupListContainer" class="col-lg-12">

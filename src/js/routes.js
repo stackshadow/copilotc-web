@@ -142,6 +142,11 @@ angular
                 },
                 {
                     serie: true,
+                    name: 'multiselect',
+                    files: [ 'node_modules/isteven-angular-multiselect/isteven-multi-select.js' ],
+                },
+                {
+                    serie: true,
                     name: 'ui-grid',
                     files: [
                         'node_modules/angular-ui-grid/ui-grid.core.min.js',
@@ -167,7 +172,13 @@ angular
                     serie: true,
                     name: 'Font Awesome',
                     files: ['node_modules/font-awesome/css/font-awesome.min.css']
-                },{
+                },
+                {
+                    serie: true,
+                    name: 'multiselect',
+                    files: ['node_modules/isteven-angular-multiselect/isteven-multi-select.css']
+                },
+                {
                     serie: true,
                     name: 'ui-grid',
                     files: ['node_modules/angular-ui-grid/ui-grid.min.css']
