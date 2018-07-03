@@ -146,11 +146,12 @@
             <div class="row">
                 <div     
                     isteven-multi-select
-                    input-model="userGroups"
-                    output-model="outputBrowsers"
-                    button-label="name"
-                    item-label="name maker"
-                    tick-property="ticked"
+                    input-model="ldapGroupsArray"
+                    output-model="ldapUsersSelectedGroupsArray"
+                    button-label="cn"
+                    item-label="cn"
+                    tick-property="selected"
+                    on-item-click="onUserGroupClicked( data )"
                 >
                 </div>
             </div>
@@ -170,6 +171,70 @@
       </div>
     </div>
 
+<!-- Group-Setting -->
+    <div class="modal fade" id="ldapGroupSettings" tabindex="-1" role="dialog" aria-labelledby="ldapGroupLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl" role="document">
+      
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="ldapGroupLabel">{{_i('group')}}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+          
+        <form>
+        
+        <!-- DN -->
+            <div class="row">
+                <div class="col-sm-12 col-lg-12">
+                    <div class="form-group">
+                        <label>{{_i('id')}}</label>
+                        <input type="text" class="form-control" placeholder="UUID" value="{{group.edited.dn}}" data-ng-model="group.edited.dn" disabled></input>
+                        <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>  -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-sm-12 col-lg-12">
+                    <div class="form-group">
+                        <label>{{_i('name')}}</label>
+                        <input type="text" class="form-control" placeholder="{{_i('name')}}" value="{{group.edited.cn}}" data-ng-model="group.edited.cn" ldapNewElement></input>
+                        <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>  -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12 col-lg-12">
+                    <div class="form-group">
+                        <label>{{_i('description')}}</label>
+                        <input type="text" class="form-control" placeholder="{{_i('description')}}" value="{{group.edited.description}}" data-ng-model="group.edited.description"></input>
+                        <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>  -->
+                    </div>
+                </div>
+            </div>
+            
+        </form>
+          
+          
+          
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{_i('Close')}}</button>
+            <button type="button" class="btn btn-primary" ng-click="ldapGroupSave('{{group.edited.name}}')" >{{_i('Save Changes')}}</button>
+            <button type="button" class="btn btn-danger" ng-click="ldapGroupDeleteApply('{{group.edited.name}}')" buttonDelete>{{_i('Delete')}}</button>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+
+
+
 
     <div class="row">
         <!-- Connect / Connections Setup -->
@@ -183,39 +248,98 @@
         </div>
     </div>
 
-    <!-- Refresh / add -->
-    <div class="row">
-        <div class="btn-group" >
-            <button type="button" class="btn btn-sm btn-primary" ng-click="ldapUserListRefresh()" >
-                <i class="fa fa-refresh "></i>
-            </button>
-            <button type="button" class="btn btn-sm btn-primary" ng-click="ldapUserAdd()">
-                <i class="fa fa-plus"></i>
-            </button>
-        </div>
-    </div>
+
+
 <div class="row">
     <ul class="nav nav-tabs" role="tablist">
+    
+<!-- Tabbar - user -->
         <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" showid="ldapUserListContainer">Users</a>
+            <a class="nav-link active" data-toggle="tab" showid="ldapUserListContainer">Users
+                <div class="btn-group" >
+                    <button type="button" class="btn btn-sm btn-primary" ng-click="ldapUserListRefresh()" >
+                        <i class="fa fa-refresh "></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary" ng-click="ldapUserAdd()">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+            </a>
         </li>
+<!-- Tabbar - group -->
         <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" showid="ldapGroupListContainer">Groups</a>
+            <a class="nav-link" data-toggle="tab" showid="ldapGroupListContainer">Groups
+            
+                <div class="btn-group" >
+                    <button type="button" class="btn btn-sm btn-primary" ng-click="ldapGroupListRefresh()" >
+                        <i class="fa fa-refresh "></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary" ng-click="ldapGroupAdd()">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+            
+            </a>
         </li>
 
     </ul>
 
 
+
+<!-- UserList -->
+
     <div id="ldapUserListContainer" class="col-lg-12">
-      <div id="gridUsers" ui-grid="gridOpts" class="grid" style="height: 400px" ui-grid-resize-columns ui-grid-pagination class="col-lg-12"></div>
+        
+        <table ng-table-dynamic="ldapUsersTableParams with ldapUserTableCols" class="table table-condensed table-bordered table-striped" >
+            <!-- 
+            <thead>
+                <tr>
+                    <th>Aktionen</th>
+                    <th>ID</th>
+                </tr>
+            </thead>
+             -->
+        
+            <tbody>
+                <tr ng-repeat="row in $data">
+                    <!-- 
+                    <td field='actions' >
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-success" ng-click="ldapUserEdit(row.uid)" >
+                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </td>
+                    -->
+
+                    <td ng-repeat="col in $columns" title="'{{col.title}}'"  sortable="{{col.field}}" ng-bind-html="col.getValue(this,col, row)"></td>
+                     
+                </tr>
+            </tbody>
+            
+        </table>
+        
+        
     </div>
-    
-    <div id="ldapGroupListContainer" class="col-lg-12">
+
+
+<!-- GroupList -->
+
+    <div id="ldapGroupListContainer" class="col-lg-12" style="display:none;">
+
+        <table ng-table-dynamic="ldapGroupsTableParams with ldapGroupTableCols" class="table table-condensed table-bordered table-striped" >
+
+            <tbody>
+                <tr ng-repeat="row in $data">
+                    <td ng-repeat="col in $columns" data-title="'{{col.title}}'" sortable="'{{col.field}}'" ng-bind-html="col.getValue(this,col, row)"></td>
+                </tr>
+            </tbody>
+
+        </table>
+
     </div>
 
         
-        
-    </div>
 
 
 </div>
@@ -223,6 +347,11 @@
 
 <script>
 
-$('a[data-toggle="tab"]').on('show.bs.tab', updateTabs );
+$('a[data-toggle="tab"]').on('show.bs.tab', function(evt){
+
+    updateTabs( evt, function( source, target ){
+
+    });
+});
 
 </script>

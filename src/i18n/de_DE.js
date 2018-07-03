@@ -9,7 +9,11 @@ _i['disconnected'] = "Getrennt";
 _i['setup'] = "Einstellungen";
 _i['Connection settings'] = "Verbindungseinstellung";
 
+_i['id'] = "ID";
+_i['name'] = "Name";
+_i['description'] = "Beschreibung";
 _i['user'] = "Benutzer";
+_i['group'] = "Gruppe";
 _i['Close'] = "Schließen";
 _i['Save Changes'] = "Änderung speichern";
 _i['Delete'] = "Löschen";

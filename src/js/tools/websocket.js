@@ -20,6 +20,9 @@ function    wsClientClass( host, port ){
         //console.log( "[websocket] Connect to event '" + event + "'" );
         $(this).on( event, callback );
     };
+    this.onCommand = function( groupName, command, callback ){
+        $(this).on( 'onCommand_' + groupName + '_' + command, callback );
+    };
     this.off = function( event, callback = null ){
         if( callback === null ){
             //console.log( "[websocket] Disconnect from event '" + event );
@@ -28,6 +31,10 @@ function    wsClientClass( host, port ){
             //console.log( "[websocket] Disconnect from event '" + event + "' with function." );
             $(this).off( event, callback );
         }
+    };
+    this.offCommand = function( groupName, command, callback ){
+       $(this).off( 'onCommand_' + groupName + '_' + command, callback );
+
     };
 
 // public vars
@@ -77,6 +84,10 @@ function    wsClientClass( host, port ){
             var jsonObject = JSON.parse( e.data );
             
             $(this.parent).trigger( "onJsonMessage", [ jsonObject ] );
+            
+            $(this.parent).trigger( "onMessage", [ jsonObject.id, jsonObject.s, jsonObject.t, jsonObject.g, jsonObject.c, jsonObject.v ] );
+            
+            $(this.parent).trigger( "onCommand_" + jsonObject.g + "_" + jsonObject.c, [ jsonObject.id, jsonObject.s, jsonObject.t, jsonObject.g, jsonObject.c, jsonObject.v ] );
         };
 
 

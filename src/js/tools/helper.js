@@ -77,9 +77,9 @@ function            genUUID(){
 }
 
 
-function            updateTabs( e ){
+function            updateTabs( e, callback = function( source, target ){} ){
 
-    var newElementID = e.currentTarget.getAttribute('showid');
+    var newElementID = e.target.getAttribute('showid');
     var newElementHTML = document.getElementById(newElementID);
 
     var oldElementID = e.relatedTarget.getAttribute('showid');
@@ -87,8 +87,13 @@ function            updateTabs( e ){
 
 
 // hide the old one
-    oldElementHTML.style.display = 'none'; 
-    newElementHTML.style.display = 'block'; 
+    if( oldElementHTML !== null && newElementHTML !== null ){
+        oldElementHTML.style.display = 'none';
+        newElementHTML.style.display = 'block';
+    }
+    
+// run callback
+    callback( e.relatedTarget, e.target );
 
 }
 

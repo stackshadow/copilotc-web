@@ -20,6 +20,7 @@
     "isteven-angular-multiselect": "^4.0.0",
     "jquery": "3.2.1",
     "minimatch": "^3.0.4",
+    "ng-table": "^3.0.1",
     "oclazyload": "^1.1.0",
     "popper.js": "1.12.9",
     "simple-line-icons": "^2.4.1",
