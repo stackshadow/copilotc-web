@@ -7,7 +7,6 @@ angular
 .module('app')
 .controller('wsConnectionCtrl', wsConnectionCtrl);
 
-
 wsConnectionCtrl.$inject = ['$scope'];
 function wsConnectionCtrl($scope) {
 
@@ -28,10 +27,10 @@ function wsConnectionCtrl($scope) {
             $scope.btnConnectionToggleDisplayName = "Connect";
             $scope.btnConnectionToggleStyle = "btn-success";
         }
-        
-        
+
+
     }
-    
+
     $scope.connectionToggle = function(){
 
     // try to connect
@@ -47,21 +46,30 @@ function wsConnectionCtrl($scope) {
         }
 //        console.log( jsonMessage );
     }
-    
+
     $scope.onConnect = function( event ){
         $scope.$apply(function () { $scope.update(); } );
     }
-    
+
     $scope.onDisconnect = function( event ){
         $scope.$apply(function () { $scope.update(); } );
     }
 
+    $scope.onPingClicked = function( event ){
+        ws.sendMsg( genUUID(), 'wsclient', "all", 'co', 'ping', '' );
+    }
+
+    $scope.onCommandPong = function( evt, cmdID, cmdSource, cmdTarget, cmdGroup, cmd, value ){
+
+    }
+    ws.onCommand( 'co', 'pong', $scope.onCommandPong );
+    $scope.$on("$destroy", function(){ ws.offCommand( 'co', 'pong', $scope.onCommandPong ); } );
 
 // register events
     ws.on( 'onJsonMessage', $scope.onJsonMessage );
     ws.on( 'onConnect', $scope.onConnect );
     ws.on( 'onDisconnect', $scope.onDisconnect );
-    
+
 // derigister on destroy of controller
     $scope.$on("$destroy", function(){
         ws.off( 'onJsonMessage', $scope.onJsonMessage );
@@ -72,3 +80,5 @@ function wsConnectionCtrl($scope) {
 
     $scope.update();
 }
+
+

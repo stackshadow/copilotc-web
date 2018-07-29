@@ -1,0 +1,150 @@
+
+
+<!-- Nodes -->
+<div class="container-fluid col-12" ng-controller="copilotdNodesCtrl">
+
+    <div class="row col-12"  >
+
+<!-- Existing Nodes -->
+        <div class="card text-white bg-info col-1" style="min-width: 300px; margin-right: 5px;" ng-repeat="node in nodesObject">
+
+            <div class="card-header">
+                <div class="input-group">
+                <!-- Node-Name -->
+                    <h3>{{node.ui.name}} </h3>
+                    <div style="flex-grow: 1;">
+                        <button
+                            type="button"
+                            class="{{ aliveStates[node.ui.aliveState+''].class }}"
+                            style="background-color: {{ aliveStates[node.ui.aliveState+''].html }};"
+                            ng-click="nodePing(node)"
+                        ></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body pb-0" style="margin-bottom: 20px;">
+
+                <div class="input-group input-group-sm col-12">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text" style="width: 110px;">Hostname</div>
+                    </div>
+                    <input type="text" class="form-control" value="{{node.host}}" data-ng-model="node.host" ng-disabled="node.ui.editActive == false"></input>
+                </div>
+
+                <div class="input-group input-group-sm col-12">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text" style="width: 110px;">Port</div>
+                    </div>
+                    <input type="text" class="form-control" value="{{node.port}}" data-ng-model="node.port" ng-disabled="node.ui.editActive == false"></input>
+                </div>
+
+                <div class="input-group input-group-sm col-12" ng-hide="node.ui.editActive == true">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text" style="width: 110px;">Typ</div>
+                    </div>
+                    <input type="text" class="form-control" value="{{ nodeTypes[node.type + ''].displayName }}" disabled></input>
+                </div>
+
+                <div class="input-group input-group-sm col-12" ng-hide="node.ui.editActive == false">
+                    <div class="dropdown btn-block btn-sm btn-block">
+                        <a
+                            class="btn btn-secondary dropdown-toggle btn-sm btn-block"
+                            href="#" role="button" id="dropdownMenuLink"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                        >
+                        {{ nodeTypes[node.type + ''].displayName }}
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink" >
+                            <a  ng-repeat="type in nodeTypes"
+                                ng-class="type.no == node.type ? 'dropdown-item active' : 'dropdown-item'"
+                                href="#"
+                                value="1"
+                                ng-click="nodeSelectType( node, type.no)"
+                            >{{type.displayName}}</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-group col-12" role="group">
+                <!-- Edit -->
+                    <button type="button" class="btn btn-success btn-sm btn-block" ng-click="nodeEditClicked(node)" ng-hide="node.ui.editActive">
+                        <span class="fa fa-edit"></span>
+                    </button>
+                <!-- Cancel -->
+                    <button type="button" class="btn btn-warning btn-sm btn-block" ng-click="nodeEditCancelClicked(node)" ng-hide="! node.ui.editActive">
+                        <span class="fa fa-ban"></span>
+                    </button>
+                <!-- Save -->
+                    <button type="button" class="btn btn-success btn-sm btn-block" ng-click="nodeEditSaveClicked(node)" ng-hide="! node.ui.editActive">
+                        <span class="fa fa-check"></span>
+                    </button>
+                <!-- Delete -->
+                    <button type="button" class="btn btn-danger btn-sm btn-block" ng-click="nodeEditDeleteClicked(node)" ng-hide="! node.ui.editActive">
+                        <span class="fa fa-trash"></span>
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+<!-- New Node -->
+        <div class="card text-white bg-info col-xs-6">
+
+            <div ng-hide="! nodeNew.ui.editActive">
+                <div class="card-header">
+                    <div class="input-group">
+                    <!-- Name -->
+                        <div class="input-group-prepend">
+                            <div class="input-group-text" style="width: 80px;">Name</div>
+                        </div>
+                        <input type="text" class="form-control" value="{{nodeNew.name}}" data-ng-model="nodeNew.name"></input>
+                    <!-- Cancel -->
+                        <button type="button" class="btn btn-warning btn-sm" ng-click="nodeNewCancelClicked()" >
+                            <span class="fa fa-ban"></span>
+                        </button>
+                    <!-- Save -->
+                        <button type="button" class="btn btn-success btn-sm" ng-click="nodeNewSaveClicked()" >
+                            <span class="fa fa-check"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card-body pb-0" style="margin-bottom: 20px;">
+
+                <!-- Hostname -->
+                    <div class="input-group input-group-sm" >
+                        <div class="input-group-prepend">
+                            <div class="input-group-text" style="width: 110px;">Hostname</div>
+                        </div>
+                        <input type="text" class="form-control" value="{{nodeNew.host}}" data-ng-model="nodeNew.host" placeholder="localhost"></input>
+                    </div>
+
+                <!-- Port -->
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text" style="width: 110px;">Port</div>
+                        </div>
+                        <input type="text" class="form-control" value="{{nodeNew.port}}" data-ng-model="nodeNew.port" placeholder="9999"></input>
+                    </div>
+
+
+                </div>
+
+            </div>
+
+            <div ng-hide="nodeNew.ui.editActive">
+                <div class="card-body pb-0" style="margin-bottom: 20px;">
+                    <button type="button" class="btn btn-success btn-lg btn-block" ng-click="nodeNewClicked()">
+                        <span class="fa fa-plus-circle"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+

@@ -236,7 +236,7 @@
 
 
 
-    <div class="row">
+    <div class="row card">
         <!-- Connect / Connections Setup -->
         <div class="btn-group" >
             <button type="button" class="{{conButtonStyle}}" ng-click="connect()" >
@@ -249,101 +249,101 @@
     </div>
 
 
+    <div class="row card">
+        <ul class="nav nav-tabs" role="tablist">
+        
+    <!-- Tabbar - user -->
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" showid="ldapUserListContainer">Users
+                    <div class="btn-group" >
+                        <button type="button" class="btn btn-sm btn-primary" ng-click="ldapUserListRefresh()" >
+                            <i class="fa fa-refresh "></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-primary" ng-click="ldapUserAdd()">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                </a>
+            </li>
+    <!-- Tabbar - group -->
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" showid="ldapGroupListContainer">Groups
+                
+                    <div class="btn-group" >
+                        <button type="button" class="btn btn-sm btn-primary" ng-click="ldapGroupListRefresh()" >
+                            <i class="fa fa-refresh "></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-primary" ng-click="ldapGroupAdd()">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                
+                </a>
+            </li>
 
-<div class="row">
-    <ul class="nav nav-tabs" role="tablist">
-    
-<!-- Tabbar - user -->
-        <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" showid="ldapUserListContainer">Users
-                <div class="btn-group" >
-                    <button type="button" class="btn btn-sm btn-primary" ng-click="ldapUserListRefresh()" >
-                        <i class="fa fa-refresh "></i>
-                    </button>
-                    <button type="button" class="btn btn-sm btn-primary" ng-click="ldapUserAdd()">
-                        <i class="fa fa-plus"></i>
-                    </button>
-                </div>
-            </a>
-        </li>
-<!-- Tabbar - group -->
-        <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" showid="ldapGroupListContainer">Groups
+        </ul>
+
+
+
+    <!-- UserList -->
+
+        <div id="ldapUserListContainer" class="col-lg-12">
             
-                <div class="btn-group" >
-                    <button type="button" class="btn btn-sm btn-primary" ng-click="ldapGroupListRefresh()" >
-                        <i class="fa fa-refresh "></i>
-                    </button>
-                    <button type="button" class="btn btn-sm btn-primary" ng-click="ldapGroupAdd()">
-                        <i class="fa fa-plus"></i>
-                    </button>
-                </div>
+            <table ng-table-dynamic="ldapUsersTableParams with ldapUserTableCols" class="table table-condensed table-bordered table-striped" >
+                <!-- 
+                <thead>
+                    <tr>
+                        <th>Aktionen</th>
+                        <th>ID</th>
+                    </tr>
+                </thead>
+                 -->
             
-            </a>
-        </li>
+                <tbody>
+                    <tr ng-repeat="row in $data">
+                        <!-- 
+                        <td field='actions' >
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-success" ng-click="ldapUserEdit(row.uid)" >
+                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </td>
+                        -->
 
-    </ul>
-
-
-
-<!-- UserList -->
-
-    <div id="ldapUserListContainer" class="col-lg-12">
-        
-        <table ng-table-dynamic="ldapUsersTableParams with ldapUserTableCols" class="table table-condensed table-bordered table-striped" >
-            <!-- 
-            <thead>
-                <tr>
-                    <th>Aktionen</th>
-                    <th>ID</th>
-                </tr>
-            </thead>
-             -->
-        
-            <tbody>
-                <tr ng-repeat="row in $data">
-                    <!-- 
-                    <td field='actions' >
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-success" ng-click="ldapUserEdit(row.uid)" >
-                                <i class="fa fa-pencil" aria-hidden="true"></i>
-                            </button>
-                        </div>
-                    </td>
-                    -->
-
-                    <td ng-repeat="col in $columns" title="'{{col.title}}'"  sortable="{{col.field}}" ng-bind-html="col.getValue(this,col, row)"></td>
-                     
-                </tr>
-            </tbody>
+                        <td ng-repeat="col in $columns" title="'{{col.title}}'"  sortable="{{col.field}}" ng-bind-html="col.getValue(this,col, row)"></td>
+                         
+                    </tr>
+                </tbody>
+                
+            </table>
             
-        </table>
-        
-        
+            
+        </div>
+
+
+    <!-- GroupList -->
+
+        <div id="ldapGroupListContainer" class="col-lg-12" style="display:none;">
+
+            <table ng-table-dynamic="ldapGroupsTableParams with ldapGroupTableCols" class="table table-condensed table-bordered table-striped" >
+
+                <tbody>
+                    <tr ng-repeat="row in $data">
+                        <td ng-repeat="col in $columns" data-title="'{{col.title}}'" sortable="'{{col.field}}'" ng-bind-html="col.getValue(this,col, row)"></td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+
+            
+
+
     </div>
-
-
-<!-- GroupList -->
-
-    <div id="ldapGroupListContainer" class="col-lg-12" style="display:none;">
-
-        <table ng-table-dynamic="ldapGroupsTableParams with ldapGroupTableCols" class="table table-condensed table-bordered table-striped" >
-
-            <tbody>
-                <tr ng-repeat="row in $data">
-                    <td ng-repeat="col in $columns" data-title="'{{col.title}}'" sortable="'{{col.field}}'" ng-bind-html="col.getValue(this,col, row)"></td>
-                </tr>
-            </tbody>
-
-        </table>
-
-    </div>
-
-        
-
 
 </div>
-
 
 <script>
 

@@ -220,6 +220,7 @@ ws.on( 'onConnect', function( event ){
 // request nodeName
     ws.sendMsg( genUUID(), 'web', '', '', 'nodeNameGet', '' );
     ws.sendMsg( genUUID(), 'web', '', '', 'authMethodeGet', '' );
+
     
 } );
 
@@ -232,6 +233,8 @@ ws.on( 'onJsonMessage', function( event, jsonMessage ){
     
     if( jsonMessage.c == "nodeName" ){
         myNodeName = jsonMessage.v;
+        
+        
     }
 
 });

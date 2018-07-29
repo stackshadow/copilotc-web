@@ -2,7 +2,7 @@ angular
 .module('app')
 .config(['$stateProvider', '$urlRouterProvider', '$ocLazyLoadProvider', '$breadcrumbProvider', function($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, $breadcrumbProvider) {
 
-  $urlRouterProvider.otherwise('/copilotd');
+  $urlRouterProvider.otherwise('/copilotd/dashboard');
 
   $ocLazyLoadProvider.config({
     // Set to true if you want to see what and when is dynamically loaded
@@ -10,115 +10,167 @@ angular
   });
 
   $breadcrumbProvider.setOptions({
-    prefixStateName: 'copilot.copilotd',
+    prefixStateName: 'copilot',
     includeAbstract: true,
     template: '<li class="breadcrumb-item" ng-repeat="step in steps" ng-class="{active: $last}" ng-switch="$last || !!step.abstract"><a ng-switch-when="false" href="{{step.ncyBreadcrumbLink}}">{{step.ncyBreadcrumbLabel}}</a><span ng-switch-when="true">{{step.ncyBreadcrumbLabel}}</span></li>'
   });
 
   $stateProvider
-  .state('copilot', {
-    abstract: true,
-    templateUrl: 'views/common/layouts/full.html',
-    //page title goes here
-    ncyBreadcrumb: {
-      label: 'Root',
-      skip: true
-    },
-    resolve: {
+    .state('copilot', {
+        abstract: true,
+        templateUrl: 'views/common/layouts/full.html',
+        //page title goes here
+        ncyBreadcrumb: {
+          label: 'Root',
+          skip: true
+        },
+        resolve: {
 
-        loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
-            // you can lazy load controllers
-            return $ocLazyLoad.load({
-                files: [
-                    'js/controllers/wsConnectionStateCtrl.js',
-                    'js/controllers/myNodeNameCtrl.js',
-                ]
-            });
-        }],
-        loadCSS: ['$ocLazyLoad', function($ocLazyLoad) {
-            // you can lazy load CSS files
-            return $ocLazyLoad.load([{
-                serie: true,
-                name: 'Flags',
-                files: ['node_modules/flag-icon-css/css/flag-icon.min.css']
-            },{
-                serie: true,
-                name: 'Font Awesome',
-                files: ['node_modules/font-awesome/css/font-awesome.min.css']
-            },{
-                serie: true,
-                name: 'Simple Line Icons',
-                files: ['node_modules/simple-line-icons/css/simple-line-icons.css']
-            },{
-                serie: true,
-                name: 'Modal',
-                files: ['src/css/modal-xl.css']
-            }]);
-        }],
-        loadPlugin: ['$ocLazyLoad', function ($ocLazyLoad) {
-        // you can lazy load files for an existing module
-        return $ocLazyLoad.load([
-            {
-                serie: true,
-                name: 'chart.js',
-                files: [
-                    'node_modules/chart.js/dist/Chart.min.js',
-                    'node_modules/angular-chart.js/dist/angular-chart.min.js'
-                ]
-            }
-        ]);
-        }],
-    }
-  })
-  .state('copilot.copilotd', {
-    url: '/copilotd',
-    templateUrl: 'views/pages/copilotd/copilotd.html',
-    //page title goes here
-    ncyBreadcrumb: {
-      label: 'copilotd',
-    },
-    //page subtitle goes here
-    params: { subtitle: 'Copilotd' },
-    resolve: {
-        
-        loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
-            // you can lazy load controllers
-            return $ocLazyLoad.load({
-                files: ['js/controllers/wsConnectionCtrl.js']
-            });
-        }],
-        
-        loadPlugin: ['$ocLazyLoad', function ($ocLazyLoad) {
+            loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+                // you can lazy load controllers
+                return $ocLazyLoad.load({
+                    files: [
+                        'js/controllers/wsConnectionCtrl.js',
+                        'js/controllers/wsConnectionStateCtrl.js',
+                        'js/controllers/myNodeNameCtrl.js'
+                    ]
+                });
+            }],
+            loadCSS: ['$ocLazyLoad', function($ocLazyLoad) {
+                // you can lazy load CSS files
+                return $ocLazyLoad.load([{
+                    serie: true,
+                    name: 'Flags',
+                    files: ['node_modules/flag-icon-css/css/flag-icon.min.css']
+                },{
+                    serie: true,
+                    name: 'Font Awesome',
+                    files: ['node_modules/font-awesome/css/font-awesome.min.css']
+                },{
+                    serie: true,
+                    name: 'Simple Line Icons',
+                    files: ['node_modules/simple-line-icons/css/simple-line-icons.css']
+                },{
+                    serie: true,
+                    name: 'Modal',
+                    files: ['src/css/modal-xl.css']
+                }]);
+            }],
+            loadPlugin: ['$ocLazyLoad', function ($ocLazyLoad) {
             // you can lazy load files for an existing module
             return $ocLazyLoad.load([
-            {
-                serie: true,
-                name: 'chart.js',
-                files: [
-                    'node_modules/chart.js/dist/Chart.min.js',
-                    'node_modules/angular-chart.js/dist/angular-chart.min.js'
-                ]
-            },
+                {
+                    serie: true,
+                    name: 'chart.js',
+                    files: [
+                        'node_modules/chart.js/dist/Chart.min.js',
+                        'node_modules/angular-chart.js/dist/angular-chart.min.js'
+                    ]
+                }
             ]);
-        }],
-        
+            }],
+        }
+  })
 
-        
-        loadCSS: ['$ocLazyLoad', function($ocLazyLoad) {
-            // you can lazy load CSS files
-            return $ocLazyLoad.load([{
-                serie: true,
-                name: 'Font Awesome',
-                files: ['node_modules/font-awesome/css/font-awesome.min.css']
-            },{
-                serie: true,
-                name: 'Simple Line Icons',
-                files: ['node_modules/simple-line-icons/css/simple-line-icons.css']
-            }]);
-        }]
-        
-    }
+
+    .state('copilot.dashboard', {
+        url: '/copilotd/dashboard',
+        //page title goes here
+        ncyBreadcrumb: {
+          label: 'dashboard',
+        },
+        //page subtitle goes here
+        params: { subtitle: 'Copilotd' },
+
+        resolve: {
+
+            loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+                // you can lazy load controllers
+                return $ocLazyLoad.load({
+                    files: [
+                        'js/controllers/wsConnectionStateCtrl.js',
+                        'js/controllers/myNodeNameCtrl.js',
+                        'js/controllers/copilotdNodesCtrl.js'
+                    ]
+                });
+            }],
+
+            loadCSS: ['$ocLazyLoad', function($ocLazyLoad) {
+                // you can lazy load CSS files
+                return $ocLazyLoad.load([{
+                    serie: true,
+                    name: 'Flags',
+                    files: ['node_modules/flag-icon-css/css/flag-icon.min.css']
+                },{
+                    serie: true,
+                    name: 'Font Awesome',
+                    files: ['node_modules/font-awesome/css/font-awesome.min.css']
+                },{
+                    serie: true,
+                    name: 'Simple Line Icons',
+                    files: ['node_modules/simple-line-icons/css/simple-line-icons.css']
+                },{
+                    serie: true,
+                    name: 'Modal',
+                    files: ['src/css/modal-xl.css']
+                }]);
+            }],
+
+            loadPlugin: ['$ocLazyLoad', function ($ocLazyLoad) {
+            // you can lazy load files for an existing module
+            return $ocLazyLoad.load([
+                {
+                    serie: true,
+                    name: 'chart.js',
+                    files: [
+                        'node_modules/chart.js/dist/Chart.min.js',
+                        'node_modules/angular-chart.js/dist/angular-chart.min.js'
+                    ]
+                }
+            ]);
+            }],
+
+        },
+
+        views: {
+            '':{
+                templateUrl: 'views/pages/copilotd/copilotd.html',
+            },
+            'core@copilot.dashboard': {
+                templateUrl: 'views/pages/copilotd/copilotdCore.html',
+            },
+            'nodes@copilot.dashboard': {
+                templateUrl: 'views/pages/copilotd/copilotdNodes.html',
+            }
+        }
+
+
     })
+
+
+    .state('copilot.keys', {
+        url: '/copilotd/keys',
+        //page title goes here
+        ncyBreadcrumb: {
+          label: 'keys',
+        },
+        //page subtitle goes here
+        params: { subtitle: 'Copilotd - Key management' },
+
+        resolve: {
+
+        },
+
+        views: {
+            '':{
+                templateUrl: 'views/pages/copilotd/keys.html',
+            }
+        }
+
+
+    })
+
+
     .state('copilot.ldap', {
         url: '/copilotd/ldap',
         templateUrl: 'views/pages/ldap/ldap.html',
@@ -129,7 +181,7 @@ angular
     //page subtitle goes here
         params: { subtitle: 'ldap' },
         resolve: {
-            
+
             loadPlugin: ['$ocLazyLoad', function ($ocLazyLoad) {
                 // you can lazy load files for an existing module
                 return $ocLazyLoad.load([
@@ -147,15 +199,15 @@ angular
                 },
                 ]);
             }],
-            
+
             loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
                 // you can lazy load controllers
                 return $ocLazyLoad.load({
                     files: ['js/controllers/ldapConnectionCtrl.js']
                 });
             }],
-            
-            
+
+
             loadCSS: ['$ocLazyLoad', function($ocLazyLoad) {
                 // you can lazy load CSS files
                 return $ocLazyLoad.load([
@@ -184,7 +236,7 @@ angular
     //page subtitle goes here
         params: { subtitle: 'mdb' },
         resolve: {
-            
+
             loadPlugin: ['$ocLazyLoad', function ($ocLazyLoad) {
                 // you can lazy load files for an existing module
                 return $ocLazyLoad.load([
@@ -204,16 +256,16 @@ angular
                 },
                 ]);
             }],
-            
+
             loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
                 // you can lazy load controllers
                 return $ocLazyLoad.load({
                     files: ['js/controllers/mdbConnectionCtrl.js' ],
                 });
             }],
-            
-            
-            
+
+
+
             loadCSS: ['$ocLazyLoad', function($ocLazyLoad) {
                 // you can lazy load CSS files
                 return $ocLazyLoad.load([
@@ -232,21 +284,7 @@ angular
     })
 
 
-  // Additional Pages
-  .state('appSimple.login', {
-    url: '/login',
-    templateUrl: 'views/pages/login.html'
-  })
-  .state('appSimple.register', {
-    url: '/register',
-    templateUrl: 'views/pages/register.html'
-  })
-  .state('appSimple.404', {
-    url: '/404',
-    templateUrl: 'views/pages/404.html'
-  })
-  .state('appSimple.500', {
-    url: '/500',
-    templateUrl: 'views/pages/500.html'
-  })
+
+
+
 }]);

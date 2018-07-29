@@ -1,12 +1,26 @@
 <div class="sidebar">
-  <nav class="sidebar-nav">
-    <ul class="nav">
-      <li class="nav-item">
-        <a class="nav-link" ui-sref-active="" ui-sref="copilot.copilotd"><i class="icon-speedometer"></i> Copilot</a>
-        <a class="nav-link" ui-sref-active="" ui-sref="copilot.ldap"><i class="fa fa-users"></i> LDAP</a>
-        <a class="nav-link" ui-sref-active="" ui-sref="copilot.mdb"><i class="fa fa-users"></i> MongoDB</a>
-        
-      </li>
-    </ul>
-  </nav>
+    <nav class="sidebar-nav">
+        <ul class="nav">
+
+            <li class="nav-item nav-dropdown">
+                <a class="nav-link nav-dropdown-toggle">
+                    <i class="fa fa-tachometer"></i> Copilot
+                </a>
+                <ul class="nav-dropdown-items">
+                    <a class="nav-link" ui-sref-active="active" ui-sref="copilot.dashboard">
+                        <i class="fa fa-tachometer"></i> Dashboard</a>
+
+                    <a class="nav-link" ui-sref-active="active" ui-sref="copilot.keys">
+                        <i class="fa fa-key"></i> Keys</a>
+
+                </ul>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" ui-sref-active="" ui-sref="copilot.ldap"><i class="fa fa-users"></i> LDAP</a>
+                <a class="nav-link" ui-sref-active="" ui-sref="copilot.mdb"><i class="fa fa-users"></i> MongoDB</a>
+            </li>
+
+</ul>
+</nav>
 </div>

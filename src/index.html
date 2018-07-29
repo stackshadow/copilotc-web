@@ -20,7 +20,8 @@
   <title>CoreUI - Open Source Bootstrap Admin Template</title>
 
   <!-- Main styles for this application -->
-  <link href="css/style.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/copilot.css" rel="stylesheet">
 
 </head>
 
@@ -51,35 +52,45 @@
 
 <body class="header-fixed sidebar-fixed aside-menu-fixed aside-menu-hidden">
 
-  <!-- User Interface -->
-  <ui-view class="app"></ui-view>
+<!-- User Interface -->
+    <ui-view class="app"></ui-view>
 
-  <!-- Bootstrap and necessary plugins -->
-  <script src="node_modules/jquery/dist/jquery.min.js"></script>
-  <script src="node_modules/popper.js/dist/umd/popper.min.js"></script>
-  <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- Bootstrap and necessary plugins -->
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/popper.js/dist/umd/popper.min.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 
-  <!-- AngularJS -->
-  <script src="node_modules/angular/angular.min.js"></script>
+<!-- AngularJS -->
+    <!-- <script src="node_modules/angular/angular.min.js"></script>  -->
+    <script src="node_modules/angular/angular.js"></script>
 
-  <!-- AngularJS plugins -->
-  <script src="node_modules/angular-animate/angular-animate.min.js"></script>
-  <script src="node_modules/angular-sanitize/angular-sanitize.min.js"></script>
-  <script src="node_modules/@uirouter/angularjs/release/angular-ui-router.min.js"></script>
-  <script src="node_modules/oclazyload/dist/ocLazyLoad.min.js"></script>
-  <script src="node_modules/angular-breadcrumb/dist/angular-breadcrumb.min.js"></script>
-  <script src="node_modules/angular-loading-bar/build/loading-bar.min.js"></script>
+<!-- AngularJS plugins -->
+    <script src="node_modules/angular-animate/angular-animate.min.js"></script>
+    <script src="node_modules/angular-sanitize/angular-sanitize.min.js"></script>
+    <script src="node_modules/@uirouter/angularjs/release/angular-ui-router.min.js"></script>
+    <script src="node_modules/oclazyload/dist/ocLazyLoad.min.js"></script>
+    <script src="node_modules/angular-breadcrumb/dist/angular-breadcrumb.min.js"></script>
+    <script src="node_modules/angular-loading-bar/build/loading-bar.min.js"></script>
 
-    <!-- Global stuff known by everything -->
+<!-- Global stuff known by everything -->
     <script src="i18n/de_DE.js"></script>
     <script src="js/tools/globals.js"></script>
-    
-    <!-- toastr -->
+
+<!-- toastr -->
     <link href="node_modules/toastr/build/toastr.min.css" rel="stylesheet">
     <script src="node_modules/toastr/build/toastr.min.js"></script>
-    
-    
-    <!-- AngularJS CoreUI App scripts -->
+
+<!-- angular tables -->
+    <link href="node_modules/ng-table/bundles/ng-table.min.css" rel="stylesheet">
+    <script src="node_modules/ng-table/bundles/ng-table.min.js"></script>
+
+
+<!-- custom -->
+    <script src="js/tools/helper.js"></script>
+    <script src="js/tools/websocket.js"></script>
+
+
+<!-- AngularJS CoreUI App scripts -->
 
     <script src="js/app.js"></script>
 
@@ -87,11 +98,8 @@
 
     <script src="js/controllers.js"></script>
     <script src="js/directives.js"></script>
-  
-    <!-- custom -->
-    <script src="js/tools/helper.js"></script>
-    <script src="js/tools/websocket.js"></script>
-      
+
+
 
 </body>
 </html>

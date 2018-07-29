@@ -12,8 +12,10 @@
             <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Node: {{myNodeName}}
             </button>
+            
+        <!-- Drop-Down -->
             <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                <a class="dropdown-item" href="#" ng-repeat="nodeName in nodeNames">{{nodeName.displayName}}</a>
+                <a class="dropdown-item" href="#" ng-repeat="nodeName in nodeNames" ng-click="nodeNameSelect( nodeName.id )">{{nodeName.displayName}}</a>
             </div>
         </div>
 

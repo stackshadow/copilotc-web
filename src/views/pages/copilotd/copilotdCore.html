@@ -1,0 +1,49 @@
+
+
+<!-- Nodes -->
+<div class="container-fluid col-12" >
+
+    <!-- Connection state -->
+    <div class="row col-12" >
+
+    <!-- Websocket -->
+        <div class="col-xs-12 col-sm-5 " style="min-width: 300px; margin-right: 5px;">
+            <div class="card text-white bg-info" ng-controller="wsConnectionCtrl">
+
+                <div class="card-header">
+                    <h4>Websocket
+                    <span class="badge {{stateStyle}}" >{{stateDisplayName}}</span>
+                    </h4>
+                </div>
+
+                <div class="card-body pb-0" style="margin-bottom: 20px;">
+                    <h6>Nodename: {{myNodeName}}</h6>
+                    <button type="button" class="btn {{btnConnectionToggleStyle}} btn-block"
+                    ng-click="connectionToggle()">{{btnConnectionToggleDisplayName}}</button>
+                    <button type="button" class="btn btn-primary btn-block"
+                    ng-click="onPingClicked()">Ping</button>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="col-xs-12 col-sm-5 " style="min-width: 300px; margin-right: 5px;">
+
+            <div class="card text-white bg-info" >
+
+                <div class="card-header">
+                    <h4>SSL
+                    <i class="fa fa-lock"></i>
+                    </h4>
+                </div>
+
+
+
+            </div>
+
+        </div>
+
+
+    </div>
+</div>

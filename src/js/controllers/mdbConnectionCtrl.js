@@ -1,5 +1,5 @@
 angular
-.module('app', ['ui.grid'] )
+.module('app', ["ngTable"] )
 .controller('mdbConnectionCtl', mdbConnectionCtl)
 .controller('mdbTemplateCtrl', mdbTemplateCtrl);
 
@@ -72,9 +72,6 @@ function mdbConnectionCtl($scope,$sce) {
             if( jsonMessage.v == "connected" ){
                 connected = true;
                 logit( logitSuccess, "MongoDB " + _i['connected'] );
-                
-                
-                ws.sendMsg( genUUID(), 'wsclient', myNodeName, 'mdb', 'templatesGet', '' );
                 return;
             }
             if( jsonMessage.v == "disconnected" ){
@@ -141,15 +138,15 @@ function mdbTemplateCtrl($scope) {
     $scope.displayName = "Test-Template";
 
     $scope.formEntrys = {
-        "a": {
-            "id": "a",
+        "xxx": {
+            "id": "xxx",
             "inputtype": "text",
             "displayName": "Test-Titel",
             "placeholder": "Test-Placeholder",
             "value": "",
         },
-        "b": {
-            "id": "b",
+        "yyy": {
+            "id": "yyy",
             "inputtype": "text",
             "displayName": "Test-Titel",
             "placeholder": "Test-Placeholder",
@@ -164,7 +161,7 @@ function mdbTemplateCtrl($scope) {
         "placeholder": "",
         "value": "",
     };
-
+    $scope.templates = [];
 
     
     $scope.addFormElement = function( id, inputtype, displayName, placeholder ){
@@ -218,42 +215,96 @@ function mdbTemplateCtrl($scope) {
     $scope.editModeToggle = function(){
 
         if( editMode == false ){
-            $( '[mdbEditMode]' ).show();
-            $scope.editStyle = "";
             editMode = true;
+            editModeShow();
             return;
         }
 
         if( editMode == true ){
-            $( '[mdbEditMode]' ).hide();
-            $scope.editStyle = "display: none;";
             editMode = false;
-            
-            console.log( $scope.newformEntry );
+            editModeHide();
             return;
         }
         
-        
     }
-    
-    
+
+    function editModeShow(){
+        $( '[mdbTemplateLine]' ).show();
+        $( '[mdbTemplateLineNew]' ).show();
+        $( '[mdbTemplateRemoveButton]' ).css('display','block');
+        return;
+    }
+
+    function editModeHide(){
+        $( '[mdbTemplateLine]' ).hide();
+        $( '[mdbTemplateLineNew]' ).hide();
+        $( '[mdbTemplateRemoveButton]' ).css('display','none');
+        return;
+    }
+
+
+
+    $scope.templatesListRequest = function(){
+        ws.sendMsg( genUUID(), 'wsclient', myNodeName, 'mdb', 'templatesListGet', '' );
+    }
+
+    $scope.templateGetRequest = function( templateID ){
+        console.log( $scope.formEntrys );
+        ws.sendMsg( genUUID(), 'wsclient', myNodeName, 'mdb', 'templateGet', templateID );
+    }
+
+
+
 // events
-    $scope.onJsonMessage = function( event, jsonMessage ){
+    $scope.onMessage = function( event, msgID, msgSource, msgTarget, msgGroup, msgCommand, msgValue ){
         
     // no message for us
-        if( jsonMessage.g != "mdb" ) return;
+        if( msgGroup != "mdb" ) return;
         
-
-
+        onMessageParseTemplatesList( msgCommand, msgValue );
+        onMessageParseTemplate( msgCommand, msgValue );
 
     }
 
+    function onMessageParseTemplatesList( msgCommand, msgValue ){
+        if( msgCommand != "templatesList" ) return false;
+        
+        $scope.templates = JSON.parse( msgValue );
+        $scope.$apply();
+        
+        
+        return true;
+    }
+
+    function onMessageParseTemplate( msgCommand, msgValue ){
+        if( msgCommand != "template" ) return false;
+        
+        var jsonArray = JSON.parse( msgValue );
+        var jsonTemplate = jsonArray[0];
+        if( jsonTemplate !== undefined ){
+            if( jsonTemplate.formElements !== undefined ){
+                
+                $scope.formEntrys = jsonTemplate.formElements;
+                console.log( $scope.formEntrys );
+                $scope.$apply();
+                
+            }
+        }
+        
+
+        
+        return true;
+    }
+
+
+
+
 // register websocket events
-    ws.on( 'onJsonMessage', $scope.onJsonMessage );
+    ws.on( 'onMessage', $scope.onMessage );
     
 // derigister on destroy of controller
     $scope.$on("$destroy", function(){
-        ws.off( 'onJsonMessage', $scope.onJsonMessage );
+        ws.off( 'onMessage', $scope.onMessage );
     });
 
 

@@ -3,7 +3,7 @@
 
 <div class="container col-sm-12 col-lg-12" >
 
-    <!-- Connect / Connections Setup -->
+<!-- Connect / Connections Setup -->
     <div class="row" ng-controller="mdbConnectionCtl">
         <div class="btn-group" >
             <button type="button" class="{{conButtonStyle}}" ng-click="connect()" >
@@ -17,24 +17,69 @@
 
 
     <div class="container col-sm-12 col-lg-12" ng-controller="mdbTemplateCtrl">
+
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" showid="mdbDashboard" aria-selected="true">Dashboard</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" showid="mdbElement" >Element</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" showid="mdbTemplates" ng-click="templatesListRequest()">Templates
+                <div class="btn-group" >
+                    <button type="button" class="btn btn-sm btn-primary" ng-click="templatesListRequest()" >
+                        <i class="fa fa-refresh "></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary" ng-click="ldapUserAdd()">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+            </a>
+        </li>
+    </ul>
+
+
+        <div id="mdbDashboard" class="row col-lg-12" >
+        </div>
+        <div id="mdbElement" class="row col-lg-12" >
+        </div>
         
-        <div class="row" >
+
+<!-- ################ DropDown-Templates ################ -->
+        <div id="mdbTemplates" class="row col-lg-12" style="display:none;">
+
+        
+<!-- ################ DropDown-Templates ################ -->
+
+            <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownTemplates" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Dropdown button
+            </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownTemplates" ng-repeat="template in templates">
+                    <a class="dropdown-item" ng-click="templateGetRequest(template.id)">{{template.displayName}}</a>
+                </div>
+            </div>
+
+
 <!-- ################ Form Lines ################ -->
-            <form>
+
+            <form mdbTemplateLine style="display: none;">
                 <div ng-repeat="item in formEntrys">
                     <div class="row" >
                     
                         <div class="input-group">
                         
                             <div class="input-group-prepend">
-                                <span mdbEditMode class="input-group-text" style="display: none;">{{item.id}}</span>
+                                <span class="input-group-text" mdbTemplateLineNew>{{item.id}}</span>
                                 <span class="input-group-text" >{{item.displayName}}</span>
                             </div>
 
                             <input id="mdb_{{item.id}}" type="{{item.inputtype}}" class="form-control" 
                             placeholder="{{item.placeholder}}" value="item.value" data-ng-model="item.value"></input>
                             
-                            <button mdbEditMode type="button" class="btn btn-danger" itemid="{{item.id}}" onclick="getScope('mdbConnectionCtl').removeInput(this)" style="{{editStyle}}" >
+                            <button type="button" class="btn btn-danger" itemid="{{item.id}}" onclick="getScope('mdbConnectionCtl').removeInput(this)" mdbTemplateRemoveButton >
                                 <i class="fa fa-trash"></i>
                             </button>
                             
@@ -45,7 +90,7 @@
             </form>
         
 <!-- ################ New Line ################ -->
-            <div mdbEditMode style="display: none;">
+            <div mdbTemplateLineNew style="display: none;">
                 <label>New Line</label>
 
                 <div class="row" >
@@ -81,7 +126,7 @@
                     </div>
                     
                     <div class="col-sm-1 col-lg-1">
-                        <button type="button" mdbEditMode class="btn btn-success" ng-click="addNewFormElement()" >
+                        <button type="button" class="btn btn-success" ng-click="addNewFormElement()" >
                             <i class="fa fa-plus"></i>
                         </button>
                     </div>
@@ -89,19 +134,28 @@
                 </div>
 
             </div>
-            
-        </div>
-        <div class="row" >
-            <div class="btn-group" >
-                <button type="button" ng-click="editModeToggle()" >
-                    Showit
-                </button>
-                <button type="button" ng-click="saveTemplate()" >
-                    Save
-                </button>
-                
+
+
+
+            <div class="row" >
+                <div class="btn-group" >
+                    <button type="button" ng-click="editModeToggle()" >
+                        Showit
+                    </button>
+                    <button type="button" ng-click="saveTemplate()" >
+                        Save
+                    </button>
+                    
+                </div>
             </div>
+
+ 
         </div>
+        
+        
+
+        
+        
     </div>
     
     
@@ -112,7 +166,11 @@
 
 
 
+<script>
 
+$('a[data-toggle="tab"]').on('show.bs.tab', updateTabs );
+
+</script>
 
 
 
