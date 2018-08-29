@@ -90,7 +90,8 @@ angular
                     files: [
                         'js/controllers/wsConnectionStateCtrl.js',
                         'js/controllers/myNodeNameCtrl.js',
-                        'js/controllers/copilotdNodesCtrl.js'
+                        'js/controllers/copilotdNodesCtrl.js',
+                        'js/controllers/sslServiceCtrl.js'
                     ]
                 });
             }],
@@ -158,7 +159,14 @@ angular
         params: { subtitle: 'Copilotd - Key management' },
 
         resolve: {
-
+            loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+                // you can lazy load controllers
+                return $ocLazyLoad.load({
+                    files: [
+                        'js/controllers/copilotdKeysCtrl.js'
+                    ]
+                });
+            }],
         },
 
         views: {

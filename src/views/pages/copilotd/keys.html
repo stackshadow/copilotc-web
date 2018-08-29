@@ -1,0 +1,100 @@
+
+<div class="container-fluid col-12" ng-controller="copilotdKeysCtrl" >
+
+<!-- Accepted keys -->
+    <div class="row col-12"  >
+
+        <div class="card text-white bg-info col-6" style="min-width: 300px; margin-right: 5px;" ng-repeat="key in keysAccepted">
+
+        <!-- Header -->
+            <div class="card-header">
+            </div>
+
+        <!-- body -->
+            <div class="card-body pb-0" style="margin-bottom: 20px;">
+
+                <div class="input-group input-group-sm col-12">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text" style="width: 110px;">Nodename</div>
+                    </div>
+                    <input type="text" class="form-control" value="{{key.nodeName}}" data-ng-model="key.nodeName" disabled></input>
+                </div>
+
+                <div class="input-group input-group-sm col-12">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text" style="width: 110px;">Schlüssel</div>
+                    </div>
+                    <textarea
+                        class="col-10"
+                        rows=3
+                        value="{{key.key}}"
+                        data-ng-model="key.key"
+                        disabled
+                    ></textarea>
+                </div>
+
+
+
+                <div class="btn-group col-12" role="group">
+                <!-- Delete -->
+                    <button type="button" class="btn btn-danger btn-sm btn-block" ng-click="nodeEditDeleteClicked(node)" >
+                        <span class="fa fa-trash"></span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+<!-- Requested keys -->
+    <div class="row col-12"  >
+
+        <div class="card text-white bg-info col-6" style="min-width: 300px; margin-right: 5px;" ng-repeat="key in keysRequested">
+
+        <!-- Header -->
+            <div class="card-header">
+            </div>
+
+        <!-- body -->
+            <div class="card-body pb-0" style="margin-bottom: 20px;">
+
+                <div class="input-group input-group-sm col-12">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text" style="width: 110px;">Nodename</div>
+                    </div>
+                    <input type="text" class="form-control" value="{{key.nodeName}}" data-ng-model="key.nodeName" disabled></input>
+                </div>
+
+                <div class="input-group input-group-sm col-12">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text" style="width: 110px;">Schlüssel</div>
+                    </div>
+                    <textarea
+                        class="col-10"
+                        rows=3
+                        value="{{key.key}}"
+                        data-ng-model="key.key"
+                        disabled
+                    ></textarea>
+                </div>
+
+
+
+                <div class="btn-group col-12" role="group">
+                <!-- Save -->
+                    <button type="button" class="btn btn-success btn-sm btn-block" ng-click="nodeEditSaveClicked(node)" >
+                        <span class="fa fa-check"></span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
